@@ -1,0 +1,2266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人工客服转接中心 - PetCare AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/design-tokens.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+            background: var(--bg-page);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            height: var(--header-height);
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .topbar-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .topbar-breadcrumb a {
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+
+        .topbar-breadcrumb a:hover {
+            color: var(--primary);
+        }
+
+        .topbar-breadcrumb .separator {
+            color: var(--gray-300);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .topbar-time {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .topbar-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--warning-bg);
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--warning-dark);
+        }
+
+        .page-content {
+            flex: 1;
+            padding: 24px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        .page-header-left h1 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 4px 0;
+        }
+
+        .page-header-left p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .page-header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .stat-icon.total {
+            background: var(--primary-bg);
+        }
+
+        .stat-icon.pending {
+            background: var(--warning-bg);
+        }
+
+        .stat-icon.processing {
+            background: var(--info-bg);
+        }
+
+        .stat-icon.resolved {
+            background: var(--success-bg);
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .filter-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+        }
+
+        .filter-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .filter-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            margin-bottom: 4px;
+        }
+
+        .filter-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .filter-item.active {
+            background: var(--primary-bg);
+        }
+
+        .filter-item-name {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .filter-item.active .filter-item-name {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .filter-count {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: var(--gray-100);
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+        }
+
+        .filter-item.active .filter-count {
+            background: var(--primary);
+            color: white;
+        }
+
+        .ticket-list {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .ticket-list-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ticket-list-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .priority-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .priority-tag.high {
+            background: var(--danger-bg);
+            color: var(--danger-dark);
+        }
+
+        .priority-tag.medium {
+            background: var(--warning-bg);
+            color: var(--warning-dark);
+        }
+
+        .priority-tag.low {
+            background: var(--info-bg);
+            color: var(--info);
+        }
+
+        .status-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: var(--radius-full);
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .status-tag.pending {
+            background: var(--warning-bg);
+            color: var(--warning-dark);
+        }
+
+        .status-tag.processing {
+            background: var(--info-bg);
+            color: var(--info);
+        }
+
+        .status-tag.resolved {
+            background: var(--success-bg);
+            color: var(--success-dark);
+        }
+
+        .risk-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            background: var(--danger-bg);
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--danger-dark);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .empty-desc {
+            font-size: 12px;
+        }
+
+        .workbench-area {
+            display: grid;
+            grid-template-columns: 320px 1fr 380px;
+            gap: 20px;
+            min-height: calc(100vh - 320px);
+        }
+
+        .ticket-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .ticket-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            margin-bottom: 8px;
+        }
+
+        .ticket-card:hover {
+            border-color: var(--primary);
+            background: var(--bg-hover);
+        }
+
+        .ticket-card.selected {
+            border-color: var(--primary);
+            background: var(--primary-bg);
+        }
+
+        .ticket-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .ticket-card-id {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .ticket-card-time {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .ticket-card-question {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .ticket-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .workbench-main {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .workbench-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .workbench-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .workbench-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border-light);
+            background: var(--gray-50);
+        }
+
+        .workbench-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .workbench-panel-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .workbench-panel-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .workbench-panel-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .workbench-panel-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border-light);
+            background: var(--gray-50);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chat-message {
+            display: flex;
+            gap: 8px;
+            max-width: 100%;
+        }
+
+        .chat-message.agent {
+            justify-content: flex-end;
+        }
+
+        .chat-message.user {
+            justify-content: flex-start;
+        }
+
+        .chat-message.system {
+            justify-content: center;
+        }
+
+        .chat-message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .chat-message.agent .chat-message-avatar {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+        }
+
+        .chat-message.user .chat-message-avatar {
+            background: #e2e8f0;
+            color: #64748b;
+        }
+
+        .chat-message.system .chat-message-avatar {
+            background: #fef3c7;
+            color: #d97706;
+            font-size: 14px;
+        }
+
+        .chat-message-bubble {
+            padding: 10px 14px;
+            border-radius: var(--radius-lg);
+            max-width: 75%;
+            font-size: 13px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .chat-message.agent .chat-message-bubble {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-message.user .chat-message-bubble {
+            background: #f1f5f9;
+            color: #1e293b;
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-message.system .chat-message-bubble {
+            background: #fef3c7;
+            color: #92400e;
+            font-size: 12px;
+            padding: 6px 12px;
+        }
+
+        .chat-message-time {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 4px;
+            text-align: left;
+        }
+
+        .chat-message.agent .chat-message-time {
+            text-align: right;
+        }
+
+        .chat-message.system .chat-message-time {
+            display: none;
+        }
+
+        .reply-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            resize: vertical;
+            min-height: 60px;
+            max-height: 150px;
+            margin-bottom: 12px;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        .reply-input:disabled {
+            background: #f8fafc;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .confirm-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .confirm-prompt {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            min-width: 320px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .confirm-prompt-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1e293b;
+        }
+
+        .confirm-prompt-desc {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        .confirm-prompt-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .info-block {
+            margin-bottom: 20px;
+        }
+
+        .info-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-block-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-block-content {
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            font-size: 13px;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .info-block-content.question {
+            border-left: 3px solid var(--primary);
+            background: var(--primary-bg);
+        }
+
+        .info-block-content.ai-answer {
+            border-left: 3px solid var(--info);
+            background: var(--info-bg);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .info-item {
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            padding: 10px 12px;
+        }
+
+        .info-item-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .info-item-value {
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .suggested-reply {
+            background: var(--success-bg);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            margin-bottom: 12px;
+        }
+
+        .suggested-reply-label {
+            font-size: 11px;
+            color: var(--success-dark);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .suggested-reply-text {
+            font-size: 13px;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .notes-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px 14px;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            color: var(--text-primary);
+            resize: vertical;
+            font-family: inherit;
+            margin-bottom: 16px;
+        }
+
+        .notes-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .notes-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .reply-preview {
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: var(--text-primary);
+            line-height: 1.5;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 16px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--text-secondary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: var(--success-dark);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: var(--warning-dark);
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .refresh-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: var(--gray-100);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .refresh-btn:hover {
+            background: var(--gray-200);
+        }
+
+        .refresh-btn.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .refresh-btn.loading::after {
+            content: '';
+            width: 12px;
+            height: 12px;
+            border: 2px solid var(--gray-300);
+            border-top-color: var(--text-secondary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 24px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .toast {
+            padding: 14px 20px;
+            border-radius: var(--radius-md);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 280px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .toast.success {
+            background: var(--success-bg);
+            color: var(--success-dark);
+        }
+
+        .toast.error {
+            background: var(--danger-bg);
+            color: var(--danger-dark);
+        }
+
+        .toast-icon {
+            font-size: 18px;
+        }
+
+        .toast-message {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chat-message {
+            display: flex;
+            gap: 8px;
+            max-width: 100%;
+        }
+
+        .chat-message.agent {
+            justify-content: flex-end;
+        }
+
+        .chat-message.user {
+            justify-content: flex-start;
+        }
+
+        .chat-message.system {
+            justify-content: center;
+        }
+
+        .chat-message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .chat-message.agent .chat-message-avatar {
+            background: var(--primary);
+            color: white;
+        }
+
+        .chat-message.user .chat-message-avatar {
+            background: var(--gray-200);
+            color: var(--text-secondary);
+        }
+
+        .chat-message-bubble {
+            padding: 10px 14px;
+            border-radius: var(--radius-lg);
+            max-width: 80%;
+            font-size: 13px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .chat-message.agent .chat-message-bubble {
+            background: var(--primary);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-message.user .chat-message-bubble {
+            background: var(--gray-100);
+            color: var(--text-primary);
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-message.system .chat-message-bubble {
+            background: var(--info-bg);
+            color: var(--info);
+            font-size: 12px;
+            padding: 6px 12px;
+        }
+
+        .chat-message-time {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        .chat-message.system .chat-message-time {
+            display: none;
+        }
+
+        .reply-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            resize: vertical;
+            min-height: 60px;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+        }
+
+        .reply-input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .confirm-prompt {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            min-width: 320px;
+        }
+
+        .confirm-prompt-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .confirm-prompt-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .confirm-prompt-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .confirm-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="project-index.html" class="sidebar-logo">
+                    <div class="sidebar-logo-icon">🐾</div>
+                    <span class="sidebar-logo-text">PetCare AI</span>
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">运营概览</div>
+                    <a href="project-index.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor"
+                                    stroke-width="1.5" />
+                                <path d="M3 9h18M9 21V9" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" />
+                            </svg>
+                        </span>
+                        <span>数据看板</span>
+                        <span class="nav-item-badge success" hidden></span>
+                    </a>
+                    <a href="dashboard.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M12 20V10M18 20V4M6 20v-6" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" />
+                            </svg>
+                        </span>
+                        <span>数据分析</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">客服运营</div>
+                    <a href="chat.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z"
+                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </span>
+                        <span>智能客服</span>
+                    </a>
+                    <a href="records.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" />
+                            </svg>
+                        </span>
+                        <span>问答记录</span>
+                    </a>
+                    <a href="transfer.html" class="nav-item active">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor"
+                                    stroke-width="1.5" stroke-linecap="round" />
+                                <circle cx="8.5" cy="7" r="4" stroke="currentColor" stroke-width="1.5" />
+                            </svg>
+                        </span>
+                        <span>转接中心</span>
+                        <span class="nav-item-badge" hidden></span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">知识管理</div>
+                    <a href="knowledge.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" />
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"
+                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                            </svg>
+                        </span>
+                        <span>知识库</span>
+                    </a>
+                    <a href="feedback.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path
+                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </span>
+                        <span>反馈分析</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">K</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name">管理员</div>
+                        <div class="sidebar-user-role">运营人员</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <div class="topbar-breadcrumb">
+                        <a href="project-index.html">首页</a>
+                        <span class="separator">/</span>
+                        <span>客服运营</span>
+                        <span class="separator">/</span>
+                        <span>转接中心</span>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <span class="topbar-time" id="currentTime">2024-03-20 14:32</span>
+                    <div class="topbar-status">
+                        <span class="status-dot status-dot-warning"></span>
+                        3 个待处理工单
+                    </div>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <div class="page-header">
+                    <div class="page-header-left">
+                        <h1>人工客服转接中心</h1>
+                        <p>高风险问题接管与工单处理中心</p>
+                    </div>
+                    <div class="page-header-right">
+                        <button class="btn btn-secondary">
+                            <span>🔄</span> 刷新数据
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon total">📋</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="statTotal">4</div>
+                            <div class="stat-label">全部工单</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon pending">⏳</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="statPending">2</div>
+                            <div class="stat-label">待接入</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon processing">🔧</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="statProcessing">1</div>
+                            <div class="stat-label">处理中</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon resolved">✅</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="statResolved">1</div>
+                            <div class="stat-label">已处理</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workbench-area">
+                    <div class="ticket-sidebar">
+                        <div class="filter-panel">
+                            <div class="filter-title">工单筛选</div>
+                            <ul class="filter-list">
+                                <li class="filter-item active" onclick="filterTickets('all')">
+                                    <span class="filter-item-name">全部工单</span>
+                                    <span class="filter-count" id="count-all">0</span>
+                                </li>
+                                <li class="filter-item" onclick="filterTickets('pending')">
+                                    <span class="filter-item-name">⏳ 待接入</span>
+                                    <span class="filter-count" id="count-pending">0</span>
+                                </li>
+                                <li class="filter-item" onclick="filterTickets('processing')">
+                                    <span class="filter-item-name">🔧 处理中</span>
+                                    <span class="filter-count" id="count-processing">0</span>
+                                </li>
+                                <li class="filter-item" onclick="filterTickets('resolved')">
+                                    <span class="filter-item-name">✅ 已解决</span>
+                                    <span class="filter-count" id="count-resolved">0</span>
+                                </li>
+                                <li class="filter-item" onclick="filterTickets('high')">
+                                    <span class="filter-item-name">⚠️ 高风险</span>
+                                    <span class="filter-count" id="count-high">0</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="ticket-list" style="flex: 1; overflow-y: auto;">
+                            <div class="ticket-list-header">
+                                <span class="ticket-list-title">工单列表</span>
+                                <span style="font-size: 12px; color: var(--text-muted);">共 <span id="ticketCount">0</span> 条</span>
+                            </div>
+                            <div id="ticketCardList" style="padding: 12px;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="workbench-main">
+                        <div class="workbench-header">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <span class="workbench-panel-title">工单详情</span>
+                                <span id="selectedTicketId" style="font-size: 12px; color: var(--text-muted);"></span>
+                            </div>
+                            <button class="refresh-btn" onclick="refreshTickets()">
+                                <span>🔄</span> 刷新
+                            </button>
+                        </div>
+                        <div class="workbench-content" id="workbenchContent">
+                            <div class="empty-state">
+                                <div class="empty-icon">📋</div>
+                                <div class="empty-title">请选择左侧工单</div>
+                                <div class="empty-desc">选择一个工单查看详情并处理</div>
+                            </div>
+                        </div>
+                        <div class="workbench-footer" id="workbenchFooter" style="display: none;">
+                        </div>
+                    </div>
+
+                    <div class="workbench-panel">
+                        <div class="workbench-panel-header">
+                            <span class="workbench-panel-title">💬 聊天记录</span>
+                            <span class="status-tag" id="handlerStatus" style="display: none;"></span>
+                        </div>
+                        <div class="workbench-panel-content" id="handlerContent" style="flex: 1; display: flex; flex-direction: column;">
+                            <div class="empty-state">
+                                <div class="empty-icon">👤</div>
+                                <div class="empty-title">等待接入工单</div>
+                                <div class="empty-desc">选择工单后可查看聊天记录</div>
+                            </div>
+                        </div>
+                        <div class="workbench-panel-footer" id="handlerFooter" style="display: none;">
+                            <textarea class="notes-input" id="handlerNotes" placeholder="处理备注（可选）..."></textarea>
+                            <textarea class="reply-input" id="agentReplyInput" placeholder="输入回复内容..."></textarea>
+                            <div class="btn-group">
+                                <button class="btn btn-primary" id="btnAssign" onclick="assignCurrentTicket()">
+                                    <span>👤</span> 接入处理
+                                </button>
+                                <button class="btn btn-success" id="btnSendReply" onclick="sendAgentReply()" disabled>
+                                    <span>📤</span> 发送给用户
+                                </button>
+                                <button class="btn btn-info" id="btnConfirmResolve" onclick="confirmResolveTicket()" disabled>
+                                    <span>🙋</span> 发起解决确认
+                                </button>
+                            </div>
+                            <button class="btn btn-warning btn-full" style="margin-top: 10px;" id="btnForceResolve" onclick="forceResolveTicket()" disabled>
+                                <span>🔒</span> 强制标记已解决
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./js/supabaseClient.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/transfer.js"></script>
+    <script>
+        let selectedTicketId = null;
+        let currentFilter = 'all';
+        let allTickets = [];
+        let selectedTicket = null;
+
+        function formatTime(isoString) {
+            if (!isoString) return '-';
+            const date = new Date(isoString);
+            return date.toLocaleString('zh-CN', {
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function getStatusName(status) {
+            const names = {
+                '待接入': '⏳ 待接入',
+                '处理中': '🔧 处理中',
+                '待用户确认': '🙋 待用户确认',
+                '已解决': '✅ 已解决'
+            };
+            return names[status] || status;
+        }
+
+        function getRiskTypeName(type) {
+            if (!type) return '-';
+            const names = {
+                'pet_health': '宠物健康',
+                'refund_dispute': '退款纠纷',
+                'product_quality': '商品质量',
+                'logistics': '物流异常',
+                '人工转接': '人工转接',
+                '宠物健康风险': '宠物健康'
+            };
+            return names[type] || type;
+        }
+
+        async function loadTickets() {
+            console.log("开始从 Supabase 读取 tickets");
+
+            if (!window.supabaseClient) {
+                console.error("Supabase 未初始化");
+                return;
+            }
+
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('tickets')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    console.error("tickets 读取失败：", error);
+                    throw error;
+                }
+
+                console.log("Supabase tickets data:", data);
+                allTickets = data || [];
+                renderTicketCards(allTickets);
+                updateStats();
+                
+                if (allTickets.length > 0) {
+                    selectTicket(allTickets[0].id);
+                }
+            } catch (error) {
+                console.error("tickets 加载异常：", error);
+                document.getElementById('ticketCardList').innerHTML = '<div class="empty-state"><div class="empty-title">工单加载失败</div></div>';
+            }
+        }
+
+        function renderTicketCards(tickets) {
+            const container = document.getElementById('ticketCardList');
+            const filtered = getFilteredTickets(tickets);
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="empty-state" style="padding: 40px 20px;"><div class="empty-title">暂无待处理工单</div></div>';
+                document.getElementById('ticketCount').textContent = '0';
+                return;
+            }
+
+            container.innerHTML = filtered.map(ticket => `
+                <div class="ticket-card ${selectedTicketId === ticket.id ? 'selected' : ''}" onclick="selectTicket('${ticket.id}')">
+                    <div class="ticket-card-header">
+                        <span class="ticket-card-id">#${String(ticket.id).slice(-6)}</span>
+                        <span class="ticket-card-time">${formatTime(ticket.created_at)}</span>
+                    </div>
+                    <div class="ticket-card-question">${ticket.user_question || '-'}</div>
+                    <div class="ticket-card-footer">
+                        ${ticket.risk_type ? `<span class="risk-tag">${getRiskTypeName(ticket.risk_type)}</span>` : ''}
+                        <span class="status-tag ${ticket.status === '待接入' ? 'pending' : ticket.status === '处理中' ? 'processing' : 'resolved'}">${getStatusName(ticket.status)}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('ticketCount').textContent = filtered.length;
+        }
+
+        function getFilteredTickets(tickets) {
+            if (currentFilter === 'all') return tickets.filter(t => t.status !== '已解决');
+            if (currentFilter === 'pending') return tickets.filter(t => t.status === '待接入');
+            if (currentFilter === 'processing') return tickets.filter(t => t.status === '处理中');
+            if (currentFilter === 'pending_confirm') return tickets.filter(t => t.status === '待用户确认');
+            if (currentFilter === 'resolved') return tickets.filter(t => t.status === '已解决');
+            if (currentFilter === 'high') return tickets.filter(t => t.priority === '高' && t.status !== '已解决');
+            return tickets.filter(t => t.status !== '已解决');
+        }
+
+        function selectTicket(id) {
+            selectedTicketId = id;
+            selectedTicket = allTickets.find(t => t.id === id);
+            console.log("当前选中工单：", selectedTicket);
+
+            document.querySelectorAll('.ticket-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            const selectedCard = document.querySelector(`.ticket-card[onclick="selectTicket('${id}')"]`);
+            if (selectedCard) {
+                selectedCard.classList.add('selected');
+            }
+
+            renderWorkbenchContent(selectedTicket);
+            renderHandlerPanel(selectedTicket);
+        }
+
+        function renderWorkbenchContent(ticket) {
+            const content = document.getElementById('workbenchContent');
+            const ticketIdSpan = document.getElementById('selectedTicketId');
+
+            if (!ticket) {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <div class="empty-title">请选择左侧工单查看详情</div>
+                        <div class="empty-desc">选择一个工单查看详情并处理</div>
+                    </div>
+                `;
+                ticketIdSpan.textContent = '';
+                return;
+            }
+
+            ticketIdSpan.textContent = `#${String(ticket.id).slice(-6)}`;
+
+            content.innerHTML = `
+                <div class="info-block">
+                    <div class="info-block-title">📝 用户原始问题</div>
+                    <div class="info-block-content question">${ticket.user_question || '-'}</div>
+                </div>
+
+                <div class="info-block">
+                    <div class="info-block-title">🤖 AI 初步判断</div>
+                    <div class="info-block-content ai-answer">${ticket.ai_judgement || '暂无 AI 判断'}</div>
+                </div>
+
+                <div class="info-block">
+                    <div class="info-block-title">📊 基本信息</div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-item-label">工单编号</div>
+                            <div class="info-item-value">#${String(ticket.id).slice(-6)}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-item-label">风险类型</div>
+                            <div class="info-item-value">${ticket.risk_type ? getRiskTypeName(ticket.risk_type) : '-'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-item-label">优先级</div>
+                            <div class="info-item-value"><span class="priority-tag ${ticket.priority === '高' ? 'high' : ticket.priority === '中' ? 'medium' : 'low'}">${ticket.priority || '-'}</span></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-item-label">当前状态</div>
+                            <div class="info-item-value"><span class="status-tag ${ticket.status === '待接入' ? 'pending' : ticket.status === '处理中' ? 'processing' : 'resolved'}">${getStatusName(ticket.status)}</span></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-item-label">创建时间</div>
+                            <div class="info-item-value">${formatTime(ticket.created_at)}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-block">
+                    <div class="info-block-title">📋 转人工理由</div>
+                    <div class="info-block-content">${ticket.transfer_reason || '系统识别需要人工处理'}</div>
+                </div>
+
+                <div class="info-block">
+                    <div class="info-block-title">💡 推荐回复</div>
+                    <div class="info-block-content">${ticket.suggested_reply || '暂无推荐回复'}</div>
+                </div>
+            `;
+        }
+
+        function renderHandlerPanel(ticket) {
+            const content = document.getElementById('handlerContent');
+            const footer = document.getElementById('handlerFooter');
+            const status = document.getElementById('handlerStatus');
+            const btnAssign = document.getElementById('btnAssign');
+            const btnSendReply = document.getElementById('btnSendReply');
+            const btnConfirmResolve = document.getElementById('btnConfirmResolve');
+            const btnForceResolve = document.getElementById('btnForceResolve');
+            const replyInput = document.getElementById('agentReplyInput');
+
+            if (!ticket) {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">👤</div>
+                        <div class="empty-title">等待接入工单</div>
+                        <div class="empty-desc">选择工单后可查看聊天记录</div>
+                    </div>
+                `;
+                footer.style.display = 'none';
+                status.style.display = 'none';
+                return;
+            }
+
+            status.style.display = 'inline-flex';
+            
+            let statusClass = 'resolved';
+            if (ticket.status === '待接入') statusClass = 'pending';
+            else if (ticket.status === '处理中') statusClass = 'processing';
+            else if (ticket.status === '待用户确认') statusClass = 'processing';
+            
+            status.className = `status-tag ${statusClass}`;
+            status.textContent = getStatusName(ticket.status);
+
+            content.innerHTML = `<div class="chat-messages" id="chatMessages"></div>`;
+
+            footer.style.display = 'block';
+
+            if (ticket.status === '待接入') {
+                btnAssign.style.display = 'inline-flex';
+                btnSendReply.style.display = 'inline-flex';
+                btnSendReply.disabled = true;
+                btnConfirmResolve.style.display = 'none';
+                btnForceResolve.style.display = 'none';
+                replyInput.disabled = true;
+                replyInput.placeholder = '请先接入工单后再回复用户';
+            } else if (ticket.status === '处理中') {
+                btnAssign.style.display = 'none';
+                btnSendReply.style.display = 'inline-flex';
+                btnSendReply.disabled = false;
+                btnConfirmResolve.style.display = 'inline-flex';
+                btnConfirmResolve.disabled = false;
+                btnForceResolve.style.display = 'inline-flex';
+                btnForceResolve.disabled = false;
+                replyInput.disabled = false;
+                replyInput.placeholder = '输入回复内容...';
+            } else if (ticket.status === '待用户确认') {
+                btnAssign.style.display = 'none';
+                btnSendReply.style.display = 'inline-flex';
+                btnSendReply.disabled = false;
+                btnConfirmResolve.style.display = 'none';
+                btnForceResolve.style.display = 'inline-flex';
+                btnForceResolve.disabled = false;
+                replyInput.disabled = false;
+                replyInput.placeholder = '输入回复内容...';
+            } else {
+                btnAssign.style.display = 'none';
+                btnSendReply.style.display = 'none';
+                btnConfirmResolve.style.display = 'none';
+                btnForceResolve.style.display = 'none';
+                replyInput.disabled = true;
+                replyInput.placeholder = '工单已关闭';
+            }
+
+            loadTicketMessages(ticket.id);
+        }
+
+        async function loadTicketMessages(ticketId) {
+            console.log("加载工单消息：", ticketId);
+            
+            if (!window.supabaseClient) {
+                console.error("Supabase 未初始化");
+                return;
+            }
+
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('ticket_messages')
+                    .select('*')
+                    .eq('ticket_id', ticketId)
+                    .order('created_at', { ascending: true });
+
+                if (error) {
+                    console.error("加载消息失败：", error);
+                    return;
+                }
+
+                console.log("ticket_messages 读取结果：", data);
+                renderChatMessages(data);
+            } catch (err) {
+                console.error("加载消息异常：", err);
+            }
+        }
+
+        function renderChatMessages(messages) {
+            const container = document.getElementById('chatMessages');
+            if (!container) return;
+
+            if (!messages || messages.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="padding: 20px;">
+                        <div class="empty-title">暂无聊天记录</div>
+                        <div class="empty-desc">接入工单后开始对话</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = messages.map(msg => `
+                <div class="chat-message ${msg.sender}">
+                    <div class="chat-message-avatar">
+                        ${msg.sender === 'agent' ? 'K' : msg.sender === 'user' ? 'U' : '📢'}
+                    </div>
+                    <div>
+                        <div class="chat-message-bubble">${msg.message}</div>
+                        <div class="chat-message-time">${formatTime(msg.created_at)}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function filterTickets(status) {
+            currentFilter = status;
+
+            document.querySelectorAll('.filter-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.filter-item').classList.add('active');
+
+            renderTicketCards(allTickets);
+        }
+
+        async function assignTicket(id) {
+            console.log("接入工单：", id);
+
+            if (!window.supabaseClient) {
+                console.error("Supabase 未初始化");
+                return;
+            }
+
+            try {
+                const notes = document.getElementById('handlerNotes')?.value || '';
+
+                const { data: ticketData, error: ticketError } = await window.supabaseClient
+                    .from('tickets')
+                    .update({ status: '处理中', handler_note: notes })
+                    .eq('id', id)
+                    .select()
+                    .single();
+
+                if (ticketError) {
+                    console.error("更新工单失败：", ticketError);
+                    return;
+                }
+
+                const { data: messageData, error: messageError } = await window.supabaseClient
+                    .from('ticket_messages')
+                    .insert({
+                        ticket_id: id,
+                        qa_id: ticketData.qa_id || null,
+                        sender: 'system',
+                        message: '人工客服已接入，正在查看您的问题。'
+                    })
+                    .select()
+                    .single();
+
+                if (messageError) {
+                    console.error("写入系统消息失败：", messageError);
+                    return;
+                }
+
+                console.log("工单已接入：", ticketData);
+                console.log("系统消息写入成功：", messageData);
+                await loadTickets();
+
+                if (selectedTicketId === id) {
+                    selectedTicket = ticketData;
+                    renderWorkbenchContent(selectedTicket);
+                    renderHandlerPanel(selectedTicket);
+                }
+
+                showToast("工单已接入");
+            } catch (err) {
+                console.error("接入工单异常：", err);
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            if (!container) {
+                const toastContainer = document.createElement('div');
+                toastContainer.id = 'toastContainer';
+                toastContainer.className = 'toast-container';
+                document.body.appendChild(toastContainer);
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <span class="toast-icon">${type === 'success' ? '✅' : '❌'}</span>
+                <span class="toast-message">${message}</span>
+            `;
+
+            document.getElementById('toastContainer').appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'fadeOut 0.3s ease-out forwards';
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        async function resolveTicket(id) {
+            console.log("解决工单：", id);
+
+            if (!window.supabaseClient) {
+                console.error("Supabase 未初始化");
+                return;
+            }
+
+            try {
+                const notes = document.getElementById('handlerNotes')?.value || '';
+                
+                const updateData = { 
+                    status: '已解决',
+                    handled_at: new Date().toISOString()
+                };
+                
+                if (notes) {
+                    updateData.handler_note = notes;
+                }
+                
+                if (selectedTicket && selectedTicket.suggested_reply) {
+                    updateData.agent_reply = selectedTicket.suggested_reply;
+                }
+
+                const { data, error } = await window.supabaseClient
+                    .from('tickets')
+                    .update(updateData)
+                    .eq('id', id)
+                    .select()
+                    .single();
+
+                if (error) {
+                    console.error("更新工单失败：", error);
+                    return;
+                }
+
+                console.log("标记已解决成功：", data);
+                console.log("当前筛选状态：", currentFilter);
+                
+                await loadTickets();
+                
+                console.log("刷新后的工单列表：", allTickets);
+
+                showToast("工单已标记为已解决");
+
+                const filtered = getFilteredTickets(allTickets);
+                console.log("当前筛选后的工单数量：", filtered.length);
+
+                if (selectedTicketId === id) {
+                    if (filtered.length > 0) {
+                        const currentIndex = filtered.findIndex(t => t.id === id);
+                        if (currentIndex >= 0 && currentIndex < filtered.length - 1) {
+                            selectTicket(filtered[currentIndex + 1].id);
+                        } else if (currentIndex === 0 && filtered.length === 1) {
+                            selectTicket(filtered[0].id);
+                        } else if (currentIndex > 0) {
+                            selectTicket(filtered[currentIndex - 1].id);
+                        } else {
+                            selectedTicket = null;
+                            selectedTicketId = null;
+                            document.getElementById('workbenchContent').innerHTML = `
+                                <div class="empty-state">
+                                    <div class="empty-icon">📋</div>
+                                    <div class="empty-title">暂无待处理工单</div>
+                                    <div class="empty-desc">当前筛选条件下没有工单</div>
+                                </div>
+                            `;
+                            document.getElementById('handlerContent').innerHTML = `
+                                <div class="empty-state">
+                                    <div class="empty-icon">👤</div>
+                                    <div class="empty-title">暂无工单</div>
+                                    <div class="empty-desc">当前筛选条件下没有可处理的工单</div>
+                                </div>
+                            `;
+                            document.getElementById('handlerFooter').style.display = 'none';
+                            document.getElementById('handlerStatus').style.display = 'none';
+                        }
+                    } else {
+                        selectedTicket = null;
+                        selectedTicketId = null;
+                        document.getElementById('workbenchContent').innerHTML = `
+                            <div class="empty-state">
+                                <div class="empty-icon">📋</div>
+                                <div class="empty-title">暂无待处理工单</div>
+                                <div class="empty-desc">当前筛选条件下没有工单</div>
+                            </div>
+                        `;
+                        document.getElementById('handlerContent').innerHTML = `
+                            <div class="empty-state">
+                                <div class="empty-icon">👤</div>
+                                <div class="empty-title">暂无工单</div>
+                                <div class="empty-desc">当前筛选条件下没有可处理的工单</div>
+                            </div>
+                        `;
+                        document.getElementById('handlerFooter').style.display = 'none';
+                        document.getElementById('handlerStatus').style.display = 'none';
+                    }
+                }
+
+                document.getElementById('handlerNotes').value = '';
+            } catch (err) {
+                console.error("解决工单异常：", err);
+            }
+        }
+
+        function assignCurrentTicket() {
+            if (selectedTicketId) {
+                assignTicket(selectedTicketId);
+            }
+        }
+
+        function resolveCurrentTicket() {
+            if (selectedTicketId) {
+                resolveTicket(selectedTicketId);
+            }
+        }
+
+        async function sendAgentReply() {
+            if (!selectedTicket) {
+                alert('请先选择一个工单');
+                return;
+            }
+
+            if (!window.supabaseClient) {
+                console.error("Supabase 未初始化");
+                return;
+            }
+
+            const replyContent = document.getElementById('agentReplyInput')?.value || '';
+            if (!replyContent.trim()) {
+                showToast("请输入回复内容", 'error');
+                return;
+            }
+
+            console.log("客服发送消息 - selectedTicket.id:", selectedTicket.id);
+            console.log("客服发送消息 - selectedTicket.qa_id:", selectedTicket.qa_id);
+            console.log("客服发送消息 - 内容:", replyContent);
+
+            try {
+                const { data: messageData, error: messageError } = await window.supabaseClient
+                    .from('ticket_messages')
+                    .insert({
+                        ticket_id: selectedTicket.id,
+                        qa_id: selectedTicket.qa_id || null,
+                        sender: 'agent',
+                        message: replyContent
+                    })
+                    .select()
+                    .single();
+
+                if (messageError) {
+                    console.error("写入客服消息失败：", messageError);
+                    return;
+                }
+
+                console.log("客服回复写入成功:", messageData);
+
+                const { data: ticketData, error: ticketError } = await window.supabaseClient
+                    .from('tickets')
+                    .update({ 
+                        status: '处理中',
+                        agent_reply: replyContent,
+                        handled_at: new Date().toISOString()
+                    })
+                    .eq('id', selectedTicket.id)
+                    .select()
+                    .single();
+
+                if (ticketError) {
+                    console.error("更新工单失败：", ticketError);
+                    return;
+                }
+
+                showToast("消息已发送");
+
+                document.getElementById('agentReplyInput').value = '';
+                loadTicketMessages(selectedTicket.id);
+            } catch (err) {
+                console.error("发送消息异常：", err);
+            }
+        }
+
+        async function confirmResolveTicket() {
+            if (!selectedTicket) {
+                alert('请先选择一个工单');
+                return;
+            }
+
+            if (!window.supabaseClient) {
+                console.error("Supabase 未初始化");
+                return;
+            }
+
+            try {
+                const { data: ticketData, error: ticketError } = await window.supabaseClient
+                    .from('tickets')
+                    .update({ status: '待用户确认' })
+                    .eq('id', selectedTicket.id)
+                    .select()
+                    .single();
+
+                if (ticketError) {
+                    console.error("更新工单状态失败：", ticketError);
+                    return;
+                }
+
+                const { data: messageData, error: messageError } = await window.supabaseClient
+                    .from('ticket_messages')
+                    .insert({
+                        ticket_id: selectedTicket.id,
+                        qa_id: selectedTicket.qa_id || null,
+                        sender: 'system',
+                        message: '客服认为本次问题已处理完成，请确认问题是否已经解决。'
+                    })
+                    .select()
+                    .single();
+
+                if (messageError) {
+                    console.error("写入系统消息失败：", messageError);
+                    return;
+                }
+
+                console.log("发起解决确认成功：", ticketData);
+                showToast("已发起解决确认，请等待用户回复");
+
+                await loadTickets();
+                if (selectedTicketId === selectedTicket.id) {
+                    selectedTicket = ticketData;
+                    renderWorkbenchContent(selectedTicket);
+                    renderHandlerPanel(selectedTicket);
+                }
+            } catch (err) {
+                console.error("发起确认异常：", err);
+            }
+        }
+
+        function showConfirmPrompt(title, desc, onConfirm) {
+            const overlay = document.createElement('div');
+            overlay.className = 'confirm-overlay';
+            overlay.id = 'confirmOverlay';
+            
+            const prompt = document.createElement('div');
+            prompt.className = 'confirm-prompt';
+            prompt.innerHTML = `
+                <div class="confirm-prompt-title">${title}</div>
+                <div class="confirm-prompt-desc">${desc}</div>
+                <div class="confirm-prompt-actions">
+                    <button class="btn btn-secondary" onclick="closeConfirmPrompt()">取消</button>
+                    <button class="btn btn-danger" onclick="confirmForceResolve()">确认关闭</button>
+                </div>
+            `;
+
+            overlay.appendChild(prompt);
+            document.body.appendChild(overlay);
+
+            window.confirmResolveCallback = onConfirm;
+        }
+
+        function closeConfirmPrompt() {
+            const overlay = document.getElementById('confirmOverlay');
+            if (overlay) overlay.remove();
+            window.confirmResolveCallback = null;
+        }
+
+        async function confirmForceResolve() {
+            closeConfirmPrompt();
+            
+            if (!selectedTicket || !window.supabaseClient) return;
+
+            try {
+                const notes = document.getElementById('handlerNotes')?.value || '';
+
+                const { data: ticketData, error: ticketError } = await window.supabaseClient
+                    .from('tickets')
+                    .update({ 
+                        status: '已解决',
+                        resolved_by: 'agent',
+                        resolved_at: new Date().toISOString(),
+                        resolution_note: notes || '客服确认关闭',
+                        handled_at: new Date().toISOString()
+                    })
+                    .eq('id', selectedTicket.id)
+                    .select()
+                    .single();
+
+                if (ticketError) {
+                    console.error("强制解决失败：", ticketError);
+                    return;
+                }
+
+                await window.supabaseClient
+                    .from('ticket_messages')
+                    .insert({
+                        ticket_id: selectedTicket.id,
+                        qa_id: selectedTicket.qa_id || null,
+                        sender: 'system',
+                        message: '客服已确认关闭本次工单，如仍有问题可重新发起咨询。'
+                    });
+
+                console.log("强制标记已解决成功：", ticketData);
+                showToast("工单已强制关闭");
+
+                await loadTickets();
+                
+                const filtered = getFilteredTickets(allTickets);
+                if (filtered.length > 0) {
+                    selectTicket(filtered[0].id);
+                } else {
+                    selectedTicket = null;
+                    selectedTicketId = null;
+                    document.getElementById('workbenchContent').innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">📋</div>
+                            <div class="empty-title">暂无待处理工单</div>
+                            <div class="empty-desc">当前筛选条件下没有工单</div>
+                        </div>
+                    `;
+                    document.getElementById('handlerContent').innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">👤</div>
+                            <div class="empty-title">暂无工单</div>
+                            <div class="empty-desc">当前筛选条件下没有可处理的工单</div>
+                        </div>
+                    `;
+                    document.getElementById('handlerFooter').style.display = 'none';
+                    document.getElementById('handlerStatus').style.display = 'none';
+                }
+            } catch (err) {
+                console.error("强制解决异常：", err);
+            }
+        }
+
+        function forceResolveTicket() {
+            showConfirmPrompt(
+                "确认关闭工单",
+                "用户尚未确认，是否由客服确认关闭？",
+                () => {}
+            );
+        }
+
+        async function simulateReply() {
+            console.warn("simulateReply 已弃用，请使用 sendAgentReply");
+            sendAgentReply();
+            return;
+
+            if (!selectedTicket) {
+                alert('请先选择一个工单');
+                return;
+            }
+
+            if (!window.supabaseClient) {
+                console.error("Supabase 未初始化");
+                return;
+            }
+
+            const notes = document.getElementById('handlerNotes')?.value || '';
+            const suggestedReply = selectedTicket.suggested_reply || '您好，您的问题已记录，我们会尽快为您处理。请稍候，感谢您的耐心等待。';
+
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('tickets')
+                    .update({ 
+                        status: '已解决',
+                        handler_note: notes,
+                        agent_reply: suggestedReply,
+                        handled_at: new Date().toISOString()
+                    })
+                    .eq('id', selectedTicket.id)
+                    .select()
+                    .single();
+
+                if (error) {
+                    console.error("模拟回复更新失败：", error);
+                    return;
+                }
+
+                console.log("模拟回复更新结果：", data);
+                alert("模拟回复已发送，工单已标记为已解决");
+
+                await loadTickets();
+
+                selectedTicket = null;
+                selectedTicketId = null;
+                document.getElementById('workbenchContent').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📋</div>
+                        <div class="empty-title">请选择左侧工单</div>
+                        <div class="empty-desc">选择一个工单查看详情并处理</div>
+                    </div>
+                `;
+                document.getElementById('handlerContent').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">👤</div>
+                        <div class="empty-title">等待接入工单</div>
+                        <div class="empty-desc">选择工单后可进行人工处理</div>
+                    </div>
+                `;
+                document.getElementById('handlerFooter').style.display = 'none';
+                document.getElementById('handlerStatus').style.display = 'none';
+                document.getElementById('handlerNotes').value = '';
+            } catch (err) {
+                console.error("模拟回复异常：", err);
+            }
+        }
+
+        function refreshTickets() {
+            const btn = document.querySelector('.refresh-btn');
+            btn.classList.add('loading');
+
+            loadTickets().then(() => {
+                setTimeout(() => {
+                    btn.classList.remove('loading');
+                }, 500);
+            });
+        }
+
+        function updateStats() {
+            const pending = allTickets.filter(t => t.status === '待接入').length;
+            const processing = allTickets.filter(t => t.status === '处理中').length;
+            const resolved = allTickets.filter(t => t.status === '已解决').length;
+            const highRisk = allTickets.filter(t => t.priority === '高').length;
+
+            document.getElementById('statTotal').textContent = allTickets.length;
+            document.getElementById('statPending').textContent = pending;
+            document.getElementById('statProcessing').textContent = processing;
+            document.getElementById('statResolved').textContent = resolved;
+
+            document.getElementById('count-all').textContent = allTickets.length;
+            document.getElementById('count-pending').textContent = pending;
+            document.getElementById('count-processing').textContent = processing;
+            document.getElementById('count-resolved').textContent = resolved;
+            document.getElementById('count-high').textContent = highRisk;
+
+            document.querySelector('.topbar-status').innerHTML = `
+                <span class="status-dot ${pending > 0 ? 'status-dot-warning' : 'status-dot-success'}"></span>
+                ${pending} 个待处理工单
+            `;
+        }
+
+        function formatTime(timestamp) {
+            if (!timestamp) return '';
+            const date = new Date(timestamp);
+            return date.toLocaleString('zh-CN', {
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function subscribeTicketsRealtime() {
+            if (!window.supabaseClient) {
+                console.error("Supabase 未初始化，无法订阅 Realtime");
+                return;
+            }
+
+            window.supabaseClient
+                .channel("tickets-channel")
+                .on(
+                    "postgres_changes",
+                    { event: "*", schema: "public", table: "tickets" },
+                    (payload) => {
+                        console.log("检测到 tickets 变化，重新加载...", payload);
+                        loadTickets();
+                    }
+                )
+                .subscribe();
+
+            window.supabaseClient
+                .channel("ticket-messages-channel")
+                .on(
+                    "postgres_changes",
+                    { event: "INSERT", schema: "public", table: "ticket_messages" },
+                    (payload) => {
+                        console.log("检测到 ticket_messages 新增：", payload);
+                        if (selectedTicketId && payload.new.ticket_id === selectedTicketId) {
+                            loadTicketMessages(selectedTicketId);
+                        }
+                    }
+                )
+                .subscribe();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTickets();
+            subscribeTicketsRealtime();
+        });
+
+        function updateTime() {
+            const now = new Date();
+            const formatted = now.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('currentTime').textContent = formatted;
+        }
+
+        updateTime();
+        setInterval(updateTime, 60000);
+    </script>
+</body>
+
+</html>

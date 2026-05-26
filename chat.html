@@ -1,0 +1,2385 @@
+﻿﻿﻿﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能客服 - PetCare AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/design-tokens.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="project-index.html" class="sidebar-logo">
+                <div class="sidebar-logo-icon">🐾</div>
+                <span class="sidebar-logo-text">PetCare AI</span>
+            </a>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">运营概览</div>
+                <a href="project-index.html" class="nav-item">
+                    <span class="nav-item-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5" />
+                            <path d="M3 9h18M9 21V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        </svg>
+                    </span>
+                    <span>数据看板</span>
+                    <span class="nav-item-badge success" id="navDashboardBadge" hidden></span>
+                </a>
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-item-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 20V10M18 20V4M6 20v-6" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" />
+                        </svg>
+                    </span>
+                    <span>数据分析</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">客服运营</div>
+                <a href="chat.html" class="nav-item active">
+                    <span class="nav-item-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z"
+                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </span>
+                    <span>智能客服</span>
+                </a>
+                <a href="records.html" class="nav-item">
+                    <span class="nav-item-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor"
+                                stroke-width="1.5" stroke-linecap="round" />
+                            <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" />
+                        </svg>
+                    </span>
+                    <span>问答记录</span>
+                </a>
+                <a href="transfer.html" class="nav-item">
+                    <span class="nav-item-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" />
+                            <circle cx="8.5" cy="7" r="4" stroke="currentColor" stroke-width="1.5" />
+                        </svg>
+                    </span>
+                    <span>转接中心</span>
+                    <span class="nav-item-badge" id="navTransferBadge" hidden></span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">知识管理</div>
+                <a href="knowledge.html" class="nav-item">
+                    <span class="nav-item-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" />
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"
+                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        </svg>
+                    </span>
+                    <span>知识库</span>
+                </a>
+                <a href="feedback.html" class="nav-item">
+                    <span class="nav-item-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path
+                                d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </span>
+                    <span>反馈分析</span>
+                </a>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="sidebar-user-avatar">K</div>
+                <div class="sidebar-user-info">
+                    <div class="sidebar-user-name">管理员</div>
+                    <div class="sidebar-user-role">运营人员</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <div class="main-content">
+        <div class="page-container">
+            <div class="breadcrumb">
+                <a href="project-index.html">首页</a>
+                <span>/</span>
+                <a href="#">客服运营</a>
+                <span>/</span>
+                <span class="active">智能客服</span>
+            </div>
+
+            <div class="page-header">
+                <div class="page-header-left">
+                    <div class="page-title-with-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z" stroke="#3B82F6"
+                                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <h1>智能客服</h1>
+                    </div>
+                    <p class="subtitle">RAG 知识库问答系统 · C端咨询模拟入口</p>
+                </div>
+                <div class="page-header-right">
+                    <div class="status-tag status-tag-success" id="aiServiceStatus">
+                        <span class="status-dot-sm"></span>
+                        AI 服务正常
+                    </div>
+                    <button class="btn btn-secondary btn-sm" id="testSupabaseBtn" onclick="testSupabaseConnection()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        测试 Supabase 连接
+                    </button>
+                </div>
+            </div>
+
+            <div class="chat-container">
+                <div class="chat-sidebar">
+                    <div class="card" style="margin-bottom: 16px;">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12" cy="12" r="10" stroke="#64748B" stroke-width="1.6" />
+                                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke="#64748B" stroke-width="1.6"
+                                        stroke-linecap="round" />
+                                    <circle cx="12" cy="17" r="0.5" fill="#64748B" />
+                                </svg>
+                                推荐问题
+                            </h3>
+                        </div>
+                        <div class="card-body" style="padding: 12px;">
+                            <div class="quick-question-list" id="quickQuestionList">
+                                <div class="quick-question-item" onclick="askQuestion('这款猫粮适合多大的猫？')">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z"
+                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                    </svg>
+                                    这款猫粮适合多大的猫？
+                                </div>
+                                <div class="quick-question-item" onclick="askQuestion('订单什么时候发货？')">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z"
+                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                    </svg>
+                                    订单什么时候发货？
+                                </div>
+                                <div class="quick-question-item" onclick="askQuestion('可以退货吗？')">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z"
+                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                    </svg>
+                                    可以退货吗？
+                                </div>
+                                <div class="quick-question-item" onclick="askQuestion('优惠券怎么使用？')">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z"
+                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                    </svg>
+                                    优惠券怎么使用？
+                                </div>
+                                <div class="quick-question-item" onclick="askQuestion('猫咪不吃东西怎么办？')">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z"
+                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                    </svg>
+                                    猫咪不吃东西怎么办？
+                                </div>
+                                <div class="quick-question-item" onclick="askQuestion('退款多久到账？')">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z"
+                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                    </svg>
+                                    退款多久到账？
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="#64748B"
+                                        stroke-width="1.6" />
+                                    <line x1="3" y1="9" x2="21" y2="9" stroke="#64748B" stroke-width="1.6" />
+                                    <line x1="9" y1="21" x2="9" y2="9" stroke="#64748B" stroke-width="1.6" />
+                                </svg>
+                                今日概览
+                            </h3>
+                        </div>
+                        <div class="card-body" style="padding: 12px;">
+                            <div class="stat-item">
+                                <span class="stat-item-label">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z"
+                                            stroke="#64748B" stroke-width="1.5" />
+                                    </svg>
+                                    咨询量
+                                </span>
+                                <span class="stat-item-value" id="chatStatConsult">89</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-item-label">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                                        <circle cx="12" cy="12" r="10" stroke="#10B981" stroke-width="1.5" />
+                                        <path d="M8 12l2 2 4-4" stroke="#10B981" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                    AI 解决率
+                                </span>
+                                <span class="stat-item-value" style="color: #10B981;" id="chatStatAutoResolve">87.6%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-item-label">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="#F59E0B"
+                                            stroke-width="1.5" stroke-linecap="round" />
+                                        <circle cx="8.5" cy="7" r="4" stroke="#F59E0B" stroke-width="1.5" />
+                                        <path d="M20 8v6M23 11h-6" stroke="#F59E0B" stroke-width="1.5"
+                                            stroke-linecap="round" />
+                                    </svg>
+                                    转人工数
+                                </span>
+                                <span class="stat-item-value" style="color: #F59E0B;" id="chatStatTransfer">5</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-item-label">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                                        <polygon
+                                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+                                            stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                    </svg>
+                                    满意度
+                                </span>
+                                <span class="stat-item-value" style="color: #3B82F6;" id="chatStatSatisfaction">96.2%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-main">
+                    <div class="chat-info-bar">
+                        <div class="chat-info-left">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                                    stroke="#64748B" stroke-width="1.5" />
+                                <polyline points="22,6 12,13 2,6" stroke="#64748B" stroke-width="1.5" />
+                            </svg>
+                            <span class="chat-info-label">会话 ID</span>
+                            <span class="chat-info-value" id="sessionId">sess_001</span>
+                            <span class="chat-status-tag">
+                                <span class="status-dot-sm"></span>
+                                在线
+                            </span>
+                        </div>
+                        <button class="btn btn-ghost btn-sm" onclick="clearChat()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                                <path
+                                    d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                            </svg>
+                            清空会话
+                        </button>
+                    </div>
+
+                    <div class="chat-container-box">
+                        <div class="chat-messages" id="chatMessages">
+                        </div>
+
+                        <div class="chat-input-area">
+                            <div class="chat-input-wrapper">
+                                <textarea class="chat-input" id="chatInput" placeholder="输入您的问题，AI 将基于知识库为您解答..."
+                                    rows="1" onkeydown="handleKeyDown(event)" oninput="autoResize(this)"></textarea>
+                                <button class="btn btn-primary btn-send" id="sendBtn" onclick="sendMessage()">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                        <line x1="22" y1="2" x2="11" y2="13" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" />
+                                        <polygon points="22 2 15 22 11 13 2 9 22 2" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                    发送
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-panel">
+                    <div class="chat-panel-header">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M21 21l-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0z" stroke="#3B82F6" stroke-width="1.6"
+                                stroke-linecap="round" />
+                        </svg>
+                        本次会话分析
+                    </div>
+                    <div class="chat-panel-body">
+                        <div class="analysis-item">
+                            <div class="analysis-label">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                                    <circle cx="12" cy="12" r="10" stroke="#64748B" stroke-width="1.5" />
+                                    <polyline points="12 6 12 12 16 14" stroke="#64748B" stroke-width="1.5"
+                                        stroke-linecap="round" />
+                                </svg>
+                                会话时长
+                            </div>
+                            <div class="analysis-value" id="analysisDuration">0 分钟</div>
+                        </div>
+                        <div class="analysis-item">
+                            <div class="analysis-label">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                                    <path
+                                        d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                                        stroke="#64748B" stroke-width="1.5" />
+                                    <line x1="8" y1="10" x2="16" y2="10" stroke="#64748B" stroke-width="1.5"
+                                        stroke-linecap="round" />
+                                    <line x1="8" y1="14" x2="12" y2="14" stroke="#64748B" stroke-width="1.5"
+                                        stroke-linecap="round" />
+                                </svg>
+                                问题类型
+                            </div>
+                            <div class="analysis-value" id="analysisType">-</div>
+                        </div>
+                        <div class="analysis-item">
+                            <div class="analysis-label">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                                    <path
+                                        d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+                                        stroke="#64748B" stroke-width="1.5" />
+                                    <line x1="12" y1="9" x2="12" y2="13" stroke="#64748B" stroke-width="1.5"
+                                        stroke-linecap="round" />
+                                    <circle cx="12" cy="17" r="0.5" fill="#64748B" />
+                                </svg>
+                                风险等级
+                            </div>
+                            <div class="analysis-value" id="analysisRisk">-</div>
+                        </div>
+                        <div class="analysis-item">
+                            <div class="analysis-label">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="#64748B" stroke-width="1.5" />
+                                    <polyline points="22 4 12 14.01 9 11.01" stroke="#64748B" stroke-width="1.5"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                知识命中
+                            </div>
+                            <div class="analysis-value" id="analysisHit">-</div>
+                        </div>
+
+                        <div class="sources-section">
+                            <div class="sources-title">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="#64748B" stroke-width="1.5" />
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"
+                                        stroke="#64748B" stroke-width="1.5" />
+                                </svg>
+                                命中知识来源
+                            </div>
+                            <div id="sourcesList" class="sources-list">
+                                暂无会话内容
+                            </div>
+                        </div>
+
+                        <div id="riskAlertCard" class="risk-alert-section" style="display: none;">
+                            <div class="risk-alert-header">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                                    <path
+                                        d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+                                        stroke="#EF4444" stroke-width="1.6" />
+                                    <line x1="12" y1="9" x2="12" y2="13" stroke="#EF4444" stroke-width="1.6"
+                                        stroke-linecap="round" />
+                                    <circle cx="12" cy="17" r="0.5" fill="#EF4444" />
+                                </svg>
+                                高风险提醒
+                            </div>
+                            <div class="risk-alert-box">
+                                <div class="risk-alert-content">
+                                    <div class="risk-alert-title" id="riskAlertTitle">检测到高风险问题</div>
+                                    <div class="risk-alert-desc" id="riskAlertDesc">已自动转人工处理</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .analysis-value {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .analysis-value.success {
+            color: var(--success);
+        }
+
+        .analysis-value.danger {
+            color: var(--danger);
+        }
+
+        .quick-question-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .quick-question-item {
+            padding: 10px 12px;
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: 1px solid transparent;
+        }
+
+        .quick-question-item:hover {
+            background: var(--primary-bg);
+            color: var(--primary);
+            border-color: var(--primary-border);
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-item-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .stat-item-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .chat-container-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 320px);
+            min-height: 400px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            max-width: 85%;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: #E2E8F0;
+            color: #64748B;
+        }
+
+        .message.ai .message-avatar {
+            background: #3B82F6;
+            color: white;
+        }
+
+        .message-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: var(--radius-lg);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .message.user .message-bubble {
+            background: var(--primary);
+            color: white;
+            border-bottom-right-radius: 4px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .message.ai .message-bubble {
+            background: var(--gray-100);
+            color: var(--text-primary);
+            border-bottom-left-radius: 4px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .message-sources {
+            margin-top: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .message-source {
+            padding: 4px 10px;
+            background: var(--info-bg);
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .message-meta {
+            margin-top: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .message-feedback {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 6px;
+            max-width: 100%;
+        }
+
+        .feedback-btn {
+            min-width: 72px;
+            height: 30px;
+            padding: 0 10px;
+            border-radius: var(--radius-full);
+            border: 1px solid var(--border-light);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            white-space: nowrap;
+            transition: all var(--transition-fast);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            box-shadow: var(--shadow-xs);
+        }
+
+        .feedback-btn:hover {
+            transform: translateY(-1px);
+            background: var(--primary-bg);
+            border-color: var(--primary-border);
+            color: var(--primary-dark);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .feedback-btn .feedback-icon {
+            width: 18px;
+            height: 18px;
+            border-radius: var(--radius-full);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 18px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .feedback-positive .feedback-icon {
+            background: var(--success-bg);
+            color: var(--success-dark);
+        }
+
+        .feedback-negative .feedback-icon {
+            background: var(--warning-bg);
+            color: var(--warning-dark);
+        }
+
+        .transfer-btn .feedback-icon {
+            background: var(--primary-bg);
+            color: var(--primary-dark);
+        }
+
+        .chat-input-area {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border-light);
+            background: var(--bg-card);
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .chat-input {
+            flex: 1;
+            min-height: 48px;
+            max-height: 120px;
+            padding: 14px 16px;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-family: inherit;
+            resize: none;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            line-height: 1.5;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+            transition: all var(--transition-fast);
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04), 0 0 0 3px rgba(59, 130, 246, 0.08);
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .analysis-item {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .analysis-item:last-child {
+            border-bottom: none;
+        }
+
+        .analysis-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .page-title-with-icon {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-title-with-icon h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .status-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--success-bg);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--success-dark);
+        }
+
+        .status-tag-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10B981;
+        }
+
+        .status-dot-sm {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .chat-info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            margin-bottom: 16px;
+        }
+
+        .chat-info-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-info-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .chat-info-value {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-family: monospace;
+        }
+
+        .chat-status-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            color: #10B981;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-light);
+        }
+
+        .btn-ghost:hover {
+            background: var(--gray-50);
+            color: var(--text-secondary);
+        }
+
+        .btn-send {
+            width: 88px;
+            height: 48px;
+            padding: 0 16px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .sources-section {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .message.ai.human .message-avatar {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+        }
+
+        .message.ai.human .message-bubble {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+        }
+
+        .message-avatar-name {
+            font-size: 11px;
+            color: #6366f1;
+            margin-left: 8px;
+            font-weight: 500;
+        }
+
+        .resolution-confirm-card {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin: 12px 0;
+            text-align: center;
+            border: 1px solid #fcd34d;
+        }
+
+        .resolution-confirm-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #92400e;
+            margin-bottom: 6px;
+        }
+
+        .resolution-confirm-desc {
+            font-size: 12px;
+            color: #b45309;
+            margin-bottom: 16px;
+        }
+
+        .resolution-confirm-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .resolution-confirm-actions .btn {
+            min-width: 100px;
+            padding: 10px 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .sources-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .sources-list {
+            color: var(--text-muted);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .source-item {
+            padding: 6px 10px;
+            background: var(--gray-50);
+            border-radius: var(--radius-sm);
+            margin-bottom: 6px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .source-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .risk-alert-section {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .risk-alert-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--danger);
+            margin-bottom: 12px;
+        }
+
+        .quick-question-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: 1px solid transparent;
+        }
+
+        .quick-question-item:hover {
+            background: var(--primary-bg);
+            color: var(--primary);
+            border-color: var(--primary-border);
+        }
+
+        .stat-item-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./js/supabaseClient.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/dataService.js"></script>
+    <script src="js/dashboardMetrics.js"></script>
+    <script src="js/chatMetrics.js"></script>
+    <script>
+        const CHAT_STORAGE_KEY = "petcare_ai_chat_messages";
+        const CHAT_SESSION_KEY = "petcare_ai_current_session_id";
+
+        let sessionId = 'sess_' + Date.now();
+        let messageCount = 0;
+        let sessionStartTime = Date.now();
+        let chatMessages = [];  // 存储所有消息的数组
+        let currentSessionMode = "ai";  // ai | human_pending | human_active
+        let currentTicketId = null;  // 当前工单ID
+        let isSending = false;  // 防止重复发送
+        let pendingQARecords = new Map();  // 跟踪正在等待答案的 qa_records
+        let qaRecordsSubscription = null;  // qa_records 实时订阅
+
+        let sessionAnalysis = {
+            questionType: null,
+            riskLevel: null,
+            knowledgeHit: false,
+            knowledgeSources: [],
+            lastUserMessage: '',
+            lastAIMessage: ''
+        };
+
+        const TRANSFER_KEYWORDS = ['转人工', '人工客服', '找人工', '我要人工'];
+
+        const highRiskKeywords = [
+            // 宠物健康风险
+            '呕吐', '拉稀', '过敏', '误食', '不吃不喝', '抽搐', '中毒', '生病', '死亡', '兽医', '医生',
+
+            // 商品质量/售后纠纷
+            '发霉', '变质', '异物', '过期', '质量问题', '投诉', '赔偿', '维权',
+
+            // 退款纠纷
+            '拒绝退款', '丢件', '损坏'
+        ];
+
+        function detectQuestionType(question) {
+            // 宠物健康风险
+            if (question.includes('呕吐') || question.includes('拉稀') || question.includes('过敏') ||
+                question.includes('误食') || question.includes('不吃不喝') || question.includes('抽搐') ||
+                question.includes('中毒') || question.includes('生病') || question.includes('死亡') ||
+                question.includes('兽医') || question.includes('医生')) {
+                return { type: '宠物健康风险', source: '10_宠物基础养护知识' };
+            }
+            // 商品质量问题
+            if (question.includes('发霉') || question.includes('变质') || question.includes('异物') ||
+                question.includes('过期') || question.includes('质量问题')) {
+                return { type: '商品质量问题', source: '06_售后政策' };
+            }
+            // 售后纠纷
+            if (question.includes('投诉') || question.includes('赔偿') || question.includes('维权')) {
+                return { type: '售后纠纷', source: '06_售后政策' };
+            }
+            // 退款纠纷
+            if (question.includes('拒绝退款')) {
+                return { type: '退款纠纷', source: '06_售后政策' };
+            }
+            // 物流异常
+            if (question.includes('丢件') || question.includes('损坏')) {
+                return { type: '物流异常', source: '07_物流规则' };
+            }
+            // 商品咨询
+            if (question.includes('猫粮') || question.includes('猫砂') || question.includes('喂食器') ||
+                question.includes('饮水机') || question.includes('用品') || question.includes('推荐')) {
+                return { type: '商品咨询', source: '商品说明' };
+            }
+            // 订单咨询
+            if (question.includes('订单') || question.includes('发货') || question.includes('优惠券')) {
+                return { type: '订单咨询', source: '09_常见问题FAQ' };
+            }
+            return { type: '其他问题', source: '09_常见问题FAQ' };
+        }
+
+        function detectRiskLevel(question) {
+            for (const keyword of highRiskKeywords) {
+                if (question.includes(keyword)) {
+                    return { isRisky: true, keyword: keyword };
+                }
+            }
+            return { isRisky: false, keyword: null };
+        }
+
+        function fallbackMockAnswer(question) {
+            if (question.includes('物流') || question.includes('发货') || question.includes('快递') || question.includes('没收到')) {
+                return '您好！关于物流问题，建议您登录账号查看订单详情中的快递单号，并在对应快递官网查询。如有延迟或丢失，请提供订单号，我会为您安排人工核查。';
+            }
+            if (question.includes('退款') || question.includes('退货') || question.includes('赔偿') || question.includes('售后')) {
+                return '您好！关于售后问题，我们的政策是：7天无理由退货（不影响二次销售），15天质量问题换货。请提供您的订单号和商品照片，我会为您跟进处理。';
+            }
+            if (question.includes('猫粮') || question.includes('猫砂') || question.includes('喂食器') || question.includes('饮水机')) {
+                return '您好！选择宠物用品建议结合您宠物的年龄、体重、健康状态来看。您可以告诉我宠物的具体情况，我可以帮您推荐合适的商品。';
+            }
+            if (question.includes('呕吐') || question.includes('误食') || question.includes('过敏') || question.includes('拉稀') || question.includes('不吃不喝')) {
+                return '您好！宠物健康问题需要重视。呕吐、误食、拉稀等症状可能涉及健康风险，建议您及时咨询宠物医生。同时我会为您转接人工客服跟进。';
+            }
+            return '您好！我已收到您的问题。请补充更多细节，如：商品名、订单号、具体场景等，我会尽力为您解答。';
+        }
+
+        function saveChatMessages() {
+            localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(chatMessages));
+        }
+
+        function loadChatMessages() {
+            const saved = localStorage.getItem(CHAT_STORAGE_KEY);
+            if (!saved) return [];
+
+            try {
+                return JSON.parse(saved);
+            } catch (e) {
+                console.error("聊天记录解析失败", e);
+                return [];
+            }
+        }
+
+        function renderChatMessages(messages) {
+            const chatContainer = document.getElementById('chatMessages');
+            chatContainer.innerHTML = '';
+
+            messages.forEach(msg => {
+                const time = msg.time;
+
+                if (msg.role === 'user') {
+                    chatContainer.innerHTML += `
+                        <div class="message user">
+                            <div class="message-avatar">U</div>
+                            <div class="message-content">
+                                <div class="message-bubble">${msg.content}</div>
+                                <div class="message-meta">
+                                    <span class="message-time">${time}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (msg.role === 'ai') {
+                    const feedbackHtml = msg.feedback === '未反馈' ? `
+                        <div class="message-feedback">
+                            <button class="feedback-btn feedback-positive" title="满意" onclick="handleFeedback('${msg.id}', 'positive', '${msg.qaId || ''}')"><span class="feedback-icon" aria-hidden="true">✓</span><span>有帮助</span></button>
+                            <button class="feedback-btn feedback-negative" title="不满意" onclick="handleFeedback('${msg.id}', 'negative', '${msg.qaId || ''}')"><span class="feedback-icon" aria-hidden="true">!</span><span>没帮助</span></button>
+                            <button class="feedback-btn transfer-btn" title="转人工" onclick="handleTransferToHuman('${msg.id}', '${msg.qaId || ''}')"><span class="feedback-icon" aria-hidden="true">↗</span><span>转人工</span></button>
+                        </div>
+                    ` : `
+                        <div class="message-feedback">
+                            <span class="feedback-status">已标记：${msg.feedback === '满意' ? '有帮助' : '没帮助'}</span>
+                        </div>
+                    `;
+
+                    chatContainer.innerHTML += `
+                        <div class="message ai" id="${msg.id}" data-qa-id="${msg.qaId || ''}">
+                            <div class="message-avatar">🐾</div>
+                            <div class="message-content">
+                                <div class="message-bubble">${msg.content}</div>
+                                <div class="message-meta">
+                                    <span class="message-time">${time}</span>
+                                    ${feedbackHtml}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (msg.role === 'system') {
+                    chatContainer.innerHTML += `
+                        <div class="message system">
+                            <div class="message-content">
+                                <div class="message-bubble system-bubble">${msg.content}</div>
+                                <div class="message-meta">
+                                    <span class="message-time">${time}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        async function saveQARecord(record) {
+            console.log("准备写入 qa_records：", record);
+
+            if (!window.supabaseClient) {
+                console.error("Supabase 未初始化，无法写入 qa_records");
+                return null;
+            }
+
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from("qa_records")
+                    .insert({
+                        user_question: record.user_question,
+                        ai_answer: record.ai_answer || "",
+                        source_doc: record.source_doc,
+                        question_type: record.question_type,
+                        risk_level: record.risk_level,
+                        need_human: record.need_human,
+                        feedback: "未反馈",
+                        conversation_id: record.conversation_id || null,
+                        message_id: record.message_id || null,
+                        response_status: record.response_status || "generating"
+                    })
+                    .select()
+                    .single();
+
+                if (error) {
+                    console.error("qa_records 写入失败：", error);
+                    return null;
+                }
+
+                console.log("qa_records 写入成功：", data);
+
+                // TODO: 临时禁用 knowledge_docs 命中次数更新，避免 406 错误干扰调试
+                // if (record.source_doc && record.source_doc.trim() !== '') {
+                //     updateKnowledgeHitCount(record.source_doc);
+                // }
+
+                return data;
+            } catch (err) {
+                console.error("qa_records 写入异常：", err);
+                return null;
+            }
+        }
+
+        // TODO: 临时禁用 knowledge_docs 命中次数更新，避免 406 错误干扰调试
+        // async function updateKnowledgeHitCount(sourceDoc) {
+        //     if (!window.supabaseClient || !sourceDoc) return;
+        //
+        //     try {
+        //         const { data, error } = await window.supabaseClient
+        //             .from('knowledge_docs')
+        //             .select('id, hit_count')
+        //             .eq('doc_name', sourceDoc)
+        //             .single();
+        //
+        //         if (error || !data) {
+        //             console.log("未找到匹配的知识库文档：", sourceDoc);
+        //             return;
+        //         }
+        //
+        //         const newHitCount = (data.hit_count || 0) + 1;
+        //
+        //         const { error: updateError } = await window.supabaseClient
+        //             .from('knowledge_docs')
+        //             .update({ hit_count: newHitCount })
+        //             .eq('id', data.id);
+        //
+        //         if (updateError) {
+        //             console.error("hit_count 更新失败：", updateError);
+        //         } else {
+        //             console.log("knowledge_docs hit_count 更新成功：", sourceDoc, "->", newHitCount);
+        //         }
+        //     } catch (err) {
+        //         console.error("hit_count 更新异常：", err);
+        //     }
+        // }
+
+        async function createTicketFromQA(record, savedQARecord) {
+            console.log("准备写入 tickets：", record);
+
+            if (!window.supabaseClient) {
+                console.error("Supabase 未初始化，无法写入 tickets");
+                return null;
+            }
+
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from("tickets")
+                    .insert({
+                        qa_id: savedQARecord?.id ? String(savedQARecord.id) : null,
+                        user_question: record.user_question,
+                        risk_type: record.question_type || "高风险问题",
+                        priority: "高",
+                        status: "待接入",
+                        ai_judgement: "该问题属于高风险场景，AI 不应直接给出最终结论。",
+                        transfer_reason: "涉及宠物健康、商品质量或售后纠纷，需人工客服介入。",
+                        suggested_reply: "请先安抚用户，核实订单、商品批次和具体情况，再根据售后政策处理。"
+                    })
+                    .select()
+                    .single();
+
+                if (error) {
+                    console.error("tickets 写入失败：", error);
+                    return null;
+                }
+
+                console.log("tickets 写入成功：", data);
+
+                // 保存当前工单ID
+                currentTicketId = data.id;
+                currentSessionMode = "human_pending";
+
+                // 写入 localStorage
+                localStorage.setItem("petcare_current_ticket_id", currentTicketId);
+                localStorage.setItem("petcare_session_mode", currentSessionMode);
+
+                console.log("当前工单ID:", currentTicketId);
+
+                // 订阅该工单的消息
+                subscribeToTicketMessages(data.id);
+
+                return data;
+            } catch (err) {
+                console.error("tickets 写入异常：", err);
+                return null;
+            }
+        }
+        const knowledgeBase = [
+            { keywords: ['猫粮', '猫', '适合'], category: 'product', answer: '我们的猫粮系列适合不同年龄段的猫咪：\n- 成猫猫粮：适用于6个月以上成年猫\n- 幼猫奶糕：适用于2-6个月幼猫\n- 老年猫粮：适用于7年以上老年猫', sources: ['商品说明-猫粮系列', '商品说明-幼猫奶糕'] },
+            { keywords: ['发货', '什么时候发', '多久'], category: 'logistics', answer: '您好！您的订单付款后，我们将在24小时内发货。\n- 普通快递：预计3-5天送达\n- 顺丰速运：预计1-2天送达\n您可以在订单详情页查看实时物流进度。', sources: ['物流规则-发货时间', '物流规则-快递公司'] },
+            { keywords: ['退货', '退换', '可以退'], category: 'after_sales', answer: '关于退换货政策：\n1. 商品签收后7天内可申请退换货\n2. 食品类商品需未拆封\n3. 玩具、服装等非食品类可拆封但需不影响二次销售\n4. 定制商品不支持退换\n如有质量问题请联系客服处理。', sources: ['售后政策-退换货规则'] },
+            { keywords: ['优惠券', '优惠', '折扣'], category: 'member', answer: '优惠券使用规则：\n1. 新用户礼包优惠券可与其他优惠叠加\n2. 会员专属优惠券每位会员每月限用2张\n3. 限时秒杀活动不可与优惠券叠加使用\n建议您在结算页面查看具体可用优惠。', sources: ['优惠券与会员规则'] },
+            { keywords: ['退款', '钱', '到账'], category: 'refund', answer: '退款说明：\n退款申请审核通过后，退款将在1-7个工作日内原路返回。\n如使用优惠券，优惠券不退还。\n如有疑问请联系客服查询退款进度。', sources: ['售后政策-退款流程'] },
+            { keywords: ['猫咪不吃', '不吃东西', '厌食'], category: 'pet_health', answer: '猫咪食欲下降可能由多种原因引起，如应激、环境变化、发情期、疾病等。建议：\n1. 观察猫咪是否有其他异常症状\n2. 尝试更换适口性更好的食物\n3. 保持环境安静舒适\n如果症状持续或伴有呕吐、腹泻等，请尽快咨询宠物医生。', sources: ['宠物健康指南-食欲问题'], isRisky: true, riskType: 'pet_health' },
+            { keywords: ['呕吐', '吐', '拉稀'], category: 'pet_health', answer: '猫咪呕吐或腹泻可能涉及健康风险，建议您：\n1. 记录呕吐/腹泻的频率和内容物\n2. 暂停喂食2-4小时观察\n3. 提供清水防止脱水\n如果症状持续超过24小时或伴有精神萎靡，请尽快咨询宠物医生。', sources: ['宠物健康指南-消化问题'], isRisky: true, riskType: 'pet_health' },
+            { keywords: ['投诉', '质量', '问题'], category: 'complaint', answer: '非常抱歉给您带来不愉快的体验。请详细描述您遇到的问题，我们会立即跟进处理。', sources: [], isRisky: true, riskType: 'complaint' }
+        ];
+
+        const riskKeywords = ['呕吐', '拉稀', '不吃', '生病', '死亡', '投诉', '质量', '异物', '过期', '退款纠纷', '欺诈'];
+
+        function handleKeyDown(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function autoResize(el) {
+            el.style.height = 'auto';
+            el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+        }
+
+        function askQuestion(question) {
+            document.getElementById('chatInput').value = question;
+            sendMessage();
+        }
+
+        function clearChat() {
+            // 清空 localStorage
+            localStorage.removeItem(CHAT_STORAGE_KEY);
+            localStorage.removeItem("petcare_current_ticket_id");
+            localStorage.removeItem("petcare_session_mode");
+            localStorage.removeItem("petcare_ai_chat_messages");
+            chatMessages = [];
+
+            // 重置会话状态
+            currentSessionMode = "ai";
+            currentTicketId = null;
+
+            // 重置会话分析状态
+            sessionAnalysis = {
+                questionType: null,
+                riskLevel: null,
+                knowledgeHit: false,
+                knowledgeSources: [],
+                lastUserMessage: '',
+                lastAIMessage: ''
+            };
+
+            document.getElementById('chatMessages').innerHTML = '';
+            document.getElementById('sourcesList').innerHTML = '暂无会话内容';
+            document.getElementById('riskAlertCard').style.display = 'none';
+            document.getElementById('analysisType').textContent = '-';
+            document.getElementById('analysisType').className = 'analysis-value';
+            document.getElementById('analysisRisk').textContent = '-';
+            document.getElementById('analysisRisk').className = 'analysis-value';
+            document.getElementById('analysisHit').textContent = '-';
+            messageCount = 0;
+            sessionStartTime = Date.now();
+
+            // 显示默认欢迎语
+            addAIMessage("您好！我是 PetCare AI 智能客服，很高兴为您服务。请问有什么可以帮您咨询的？", [], false, null);
+        }
+
+        function detectRisk(text) {
+            for (const keyword of riskKeywords) {
+                if (text.includes(keyword)) {
+                    if (['呕吐', '拉稀', '不吃', '生病'].includes(keyword)) {
+                        return { isRisky: true, type: 'pet_health', reason: '涉及宠物健康风险，需要人工介入' };
+                    } else if (['投诉', '质量', '异物', '过期'].includes(keyword)) {
+                        return { isRisky: true, type: 'quality', reason: '涉及商品质量投诉，需要人工介入' };
+                    } else if (keyword === '退款纠纷') {
+                        return { isRisky: true, type: 'refund', reason: '涉及退款纠纷，需要人工介入' };
+                    }
+                }
+            }
+            return { isRisky: false, type: null, reason: null };
+        }
+
+        function searchKnowledge(question) {
+            question = question.toLowerCase();
+            for (const item of knowledgeBase) {
+                for (const keyword of item.keywords) {
+                    if (question.includes(keyword.toLowerCase())) {
+                        return item;
+                    }
+                }
+            }
+            return null;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const message = input.value.trim();
+
+            if (!message) return;
+            if (isSending) return;
+
+            isSending = true;
+            if (sendBtn) sendBtn.disabled = true;
+
+            messageCount++;
+            addUserMessage(message);
+            input.value = '';
+            input.style.height = 'auto';
+
+            const risk = detectRiskLevel(message);
+            const qaType = detectQuestionType(message);
+            const isSensitive = risk.isRisky;
+            const isTransferRequest = TRANSFER_KEYWORDS.some(k => message.includes(k));
+            const needHuman = isSensitive || isTransferRequest;
+            const riskLevel = needHuman ? '高' : '低';
+            const questionType = qaType.type;
+            const conversationId = localStorage.getItem('dify_conversation_id') || '';
+
+            const knowledgeMatch = searchKnowledge(message);
+
+            sessionAnalysis = {
+                questionType: questionType,
+                riskLevel: riskLevel,
+                knowledgeHit: knowledgeMatch !== null,
+                knowledgeSources: knowledgeMatch ? knowledgeMatch.sources : [],
+                lastUserMessage: message,
+                lastAIMessage: ''
+            };
+
+            console.log("开始发送问题:", message);
+            console.log("当前会话模式:", currentSessionMode);
+            console.log("当前工单ID:", currentTicketId);
+            console.log("是否走 Dify:", currentSessionMode === "ai");
+            console.log("是否走人工消息:", currentSessionMode === "human_pending" || currentSessionMode === "human_active");
+
+            // 如果已经转人工，用户继续补充信息时，不调用 Dify，写入 ticket_messages
+            if (currentSessionMode === "human_pending" || currentSessionMode === "human_active") {
+                removeLoadingMessage();
+
+                if (!currentTicketId) {
+                    console.error("无法写入消息：currentTicketId 为空");
+                    addSystemMessage('当前人工工单异常，请重新点击转人工或清空会话后重试。');
+                    isSending = false;
+                    if (sendBtn) sendBtn.disabled = false;
+                    return;
+                }
+
+                if (window.supabaseClient) {
+                    writeUserMessageToTicket(message).then(() => {
+                        addSystemMessage('已收到您的补充信息，客服接入后会一并查看。');
+                        isSending = false;
+                        if (sendBtn) sendBtn.disabled = false;
+                    }).catch(err => {
+                        console.error("写入用户消息异常：", err);
+                        addSystemMessage('消息发送失败，请稍后重试。');
+                        isSending = false;
+                        if (sendBtn) sendBtn.disabled = false;
+                    });
+                } else {
+                    console.error("Supabase 未初始化");
+                    addSystemMessage('消息发送失败，请稍后重试。');
+                    isSending = false;
+                    if (sendBtn) sendBtn.disabled = false;
+                }
+                return;
+            }
+
+            // 如果是敏感问题或主动转人工请求，直接转人工，不调用 Dify
+            if (needHuman) {
+                removeLoadingMessage();
+
+                // 设置会话状态为转人工中
+                currentSessionMode = "human_pending";
+
+                const systemMessage = '该问题涉及宠物健康、商品质量或售后风险，已为您转接人工客服，客服将根据订单信息和售后政策继续处理。';
+                addSystemMessage(systemMessage);
+
+                // 写入 qa_records
+                const recordData = {
+                    user_question: message,
+                    ai_answer: systemMessage,
+                    source_doc: qaType.source,
+                    question_type: questionType,
+                    risk_level: '高',
+                    need_human: true,
+                    feedback: '未反馈',
+                    conversation_id: null,
+                    message_id: null
+                };
+
+                saveQARecord(recordData).then(savedQARecord => {
+                    if (savedQARecord) {
+                        createTicketFromQA(recordData, savedQARecord);
+                    }
+                    updateAnalysis();
+                    isSending = false;
+                    if (sendBtn) sendBtn.disabled = false;
+                }).catch(err => {
+                    console.error("保存 qa_records 失败：", err);
+                    isSending = false;
+                    if (sendBtn) sendBtn.disabled = false;
+                });
+
+                return;
+            }
+
+            // 非敏感问题，调用 Dify
+            addLoadingMessage();
+
+            console.log("准备调用 Dify:", message);
+
+            fetch("/api/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    query: message,
+                    conversation_id: conversationId,
+                    user: "petcare-demo-user"
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('API响应失败: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    removeLoadingMessage();
+
+                    if (result && result.answer) {
+                        console.log("Dify 返回成功:", result.answer.substring(0, 50) + "...");
+
+                        const sources = result.sources || result.retriever_resources || [];
+                        const finalConversationId = result.conversation_id || conversationId;
+                        const messageId = result.message_id || result.id || "";
+
+                        if (finalConversationId) {
+                            localStorage.setItem('dify_conversation_id', finalConversationId);
+                        }
+
+                        // 写入 qa_records
+                        const recordData = {
+                            user_question: message,
+                            ai_answer: result.answer,
+                            source_doc: JSON.stringify(sources),
+                            question_type: questionType,
+                            risk_level: '低',
+                            need_human: false,
+                            feedback: '未反馈',
+                            conversation_id: finalConversationId || null,
+                            message_id: messageId || null
+                        };
+
+                        saveQARecord(recordData).then(savedQARecord => {
+                            const qaRecordId = savedQARecord?.id || null;
+                            sessionAnalysis.lastAIMessage = result.answer;
+                            if (sources.length > 0 && sessionAnalysis.knowledgeSources.length === 0) {
+                                sessionAnalysis.knowledgeHit = true;
+                                sessionAnalysis.knowledgeSources = sources.map(s => s.document_name || s.title || '未知来源');
+                            }
+                            addAIMessage(result.answer, sources, false, qaRecordId);
+                            updateAnalysis();
+                        });
+                    } else {
+                        console.error("Dify 返回数据异常:", result);
+                        const errorMsg = result?.message || result?.error || "AI 服务暂时异常，请稍后重试或转人工。";
+                        addAIMessage(errorMsg, [], false, null);
+                    }
+                })
+                .catch(error => {
+                    console.error("Dify 调用失败：", error);
+                    removeLoadingMessage();
+                    const errorMsg = error?.message || error?.response?.data?.message || "AI 服务调用失败，请稍后重试或转人工。";
+                    addAIMessage(errorMsg, [], false, null);
+                })
+                .finally(() => {
+                    isSending = false;
+                    if (sendBtn) sendBtn.disabled = false;
+                });
+        }
+
+        function addLoadingMessage() {
+            const messages = document.getElementById('chatMessages');
+            const loadingId = 'loading-' + Date.now();
+            messages.innerHTML += `
+                <div class="message ai" id="${loadingId}">
+                    <div class="message-avatar">🐾</div>
+                    <div class="message-content">
+                        <div class="message-bubble">正在为您查询知识库...</div>
+                        <div class="message-meta">
+                            <span class="message-time">${new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            messages.scrollTop = messages.scrollHeight;
+            return loadingId;
+        }
+
+        function removeLoadingMessage() {
+            const messages = document.getElementById('chatMessages');
+            const loading = messages.querySelector('.message.ai:last-child');
+            if (loading && (loading.querySelector('.message-bubble').textContent === '思考中...' || loading.querySelector('.message-bubble').textContent === '正在为您查询知识库...')) {
+                loading.remove();
+            }
+        }
+
+        function addUserMessage(text) {
+            const messages = document.getElementById('chatMessages');
+            const time = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+            const messageId = 'msg-' + Date.now();
+
+            messages.innerHTML += `
+                <div class="message user">
+                    <div class="message-avatar">U</div>
+                    <div class="message-content">
+                        <div class="message-bubble">${text}</div>
+                        <div class="message-meta">
+                            <span class="message-time">${time}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            messages.scrollTop = messages.scrollHeight;
+
+            // 保存到数组并持久化
+            chatMessages.push({
+                id: messageId,
+                role: 'user',
+                content: text,
+                time: time,
+                qaId: '',
+                feedback: '未反馈',
+                needHuman: false,
+                isSensitive: false
+            });
+            saveChatMessages();
+        }
+
+        function addAIMessage(text, sources, isHuman = false, qaRecordId = null) {
+            const messages = document.getElementById('chatMessages');
+            const time = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+            const avatar = isHuman ? 'K' : '🐾';
+            const avatarName = isHuman ? '人工客服 · 小K' : 'PetCare 助手';
+            let sourcesHtml = '';
+
+            if (sources && sources.length > 0) {
+                sourcesHtml = `<div class="message-sources">${sources.map(s => `<span class="message-source">${s}</span>`).join('')}</div>`;
+            }
+
+            const messageId = 'msg-' + Date.now();
+            const feedbackHtml = !isHuman ? `
+                <div class="message-feedback">
+                    <button class="feedback-btn feedback-positive" title="满意" onclick="handleFeedback('${messageId}', 'positive', '${qaRecordId || ''}')"><span class="feedback-icon" aria-hidden="true">✓</span><span>有帮助</span></button>
+                    <button class="feedback-btn feedback-negative" title="不满意" onclick="handleFeedback('${messageId}', 'negative', '${qaRecordId || ''}')"><span class="feedback-icon" aria-hidden="true">!</span><span>没帮助</span></button>
+                    <button class="feedback-btn transfer-btn" title="转人工" onclick="handleTransferToHuman('${messageId}', '${qaRecordId || ''}')"><span class="feedback-icon" aria-hidden="true">↗</span><span>转人工</span></button>
+                </div>
+            ` : '';
+
+            // 清理多余的换行（超过2个连续换行只保留2个）
+            const cleanText = text.replace(/\n{3,}/g, '\n\n');
+
+            messages.innerHTML += `
+                <div class="message ai" id="${messageId}" data-qa-id="${qaRecordId || ''}">
+                    <div class="message-avatar">${avatar}</div>
+                    <div class="message-content">
+                        <div class="message-bubble">${cleanText}</div>
+                        ${sourcesHtml}
+                        <div class="message-meta">
+                            <span class="message-time">${time}</span>
+                            ${feedbackHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+            messages.scrollTop = messages.scrollHeight;
+
+            // 保存到数组并持久化
+            chatMessages.push({
+                id: messageId,
+                role: 'ai',
+                content: text,
+                time: time,
+                qaId: qaRecordId || '',
+                feedback: '未反馈',
+                needHuman: false,
+                isSensitive: false
+            });
+            saveChatMessages();
+
+            if (sources && sources.length > 0) {
+                document.getElementById('sourcesList').innerHTML = sources.map(s => `<div style="margin-bottom: 8px;">${s}</div>`).join('');
+            }
+        }
+
+        function addHumanMessage(text) {
+            addAIMessage(text, [], true);
+        }
+
+        function addSystemMessage(text) {
+            const messages = document.getElementById('chatMessages');
+            const time = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+            const messageId = 'msg-' + Date.now();
+
+            messages.innerHTML += `
+                <div class="message system">
+                    <div class="message-content" style="max-width: 100%;">
+                        <div class="message-bubble system" style="background: var(--warning-bg, #fff3cd); color: var(--warning-dark, #856404); border: 1px solid var(--warning-border, #ffeeba);">${text}</div>
+                        <div class="message-meta">
+                            <span class="message-time">${time}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            messages.scrollTop = messages.scrollHeight;
+
+            // 保存到数组并持久化
+            chatMessages.push({
+                id: messageId,
+                role: 'system',
+                content: text,
+                time: time,
+                qaId: '',
+                feedback: '未反馈',
+                needHuman: true,
+                isSensitive: true
+            });
+            saveChatMessages();
+        }
+
+        function addRiskAlert(result) {
+            document.getElementById('riskAlertCard').style.display = 'block';
+            document.getElementById('riskAlertTitle').textContent = `检测到高风险问题：${result.type === 'pet_health' ? '宠物健康' : result.type === 'quality' ? '商品质量' : '退款纠纷'}`;
+            document.getElementById('riskAlertDesc').textContent = result.reason;
+
+            document.getElementById('analysisRisk').textContent = '高风险';
+            document.getElementById('analysisRisk').className = 'analysis-value danger';
+        }
+
+        function processMessage(text) {
+            const risk = detectRisk(text);
+            if (risk.isRisky) {
+                return { isRisky: true, type: risk.type, reason: risk.reason };
+            }
+
+            const knowledge = searchKnowledge(text);
+            if (knowledge) {
+                return {
+                    isRisky: false,
+                    answer: knowledge.answer,
+                    sources: knowledge.sources,
+                    category: knowledge.category
+                };
+            }
+
+            return { isRisky: false, answer: null, sources: [] };
+        }
+
+        async function handleFeedback(messageId, feedbackType, qaRecordId = '') {
+            const messageElement = document.getElementById(messageId);
+            if (!messageElement) return;
+
+            const actualQaId = qaRecordId || messageElement.dataset.qaId;
+            const feedbackValue = feedbackType === 'positive' ? '满意' : '不满意';
+            const feedbackTypeText = feedbackType === 'positive' ? '有帮助' : '没帮助';
+
+            console.log("当前反馈 qaId:", actualQaId);
+
+            // 更新界面显示反馈状态
+            const feedbackDiv = messageElement.querySelector('.message-feedback');
+            if (feedbackDiv) {
+                feedbackDiv.innerHTML = `<span class="feedback-status">已标记：${feedbackTypeText}</span>`;
+            }
+
+            // 更新 localStorage 中的反馈状态
+            const msgIndex = chatMessages.findIndex(m => m.id === messageId);
+            if (msgIndex !== -1) {
+                chatMessages[msgIndex].feedback = feedbackValue;
+                saveChatMessages();
+            }
+
+            // 如果有 qaRecordId，更新 Supabase
+            if (actualQaId && window.supabaseClient) {
+                try {
+                    // 更新 qa_records
+                    const { error: updateError } = await window.supabaseClient
+                        .from("qa_records")
+                        .update({ feedback: feedbackTypeText })
+                        .eq("id", actualQaId);
+
+                    if (updateError) {
+                        console.error("更新 qa_records 反馈失败：", updateError);
+                        return;
+                    }
+
+                    console.log("qa_records 反馈更新成功:", actualQaId);
+
+                    // 写入 feedback_records
+                    const reason = feedbackType === 'positive' ? "" : "用户认为回答未解决问题";
+                    const { data: feedbackData, error: feedbackError } = await window.supabaseClient
+                        .from("feedback_records")
+                        .insert({
+                            qa_id: actualQaId,
+                            feedback_type: feedbackTypeText,
+                            reason: reason
+                        })
+                        .select()
+                        .single();
+
+                    if (feedbackError) {
+                        console.error("feedback_records 写入失败：", feedbackError);
+                    } else {
+                        console.log("feedback_records 写入成功:", feedbackData);
+                    }
+                } catch (err) {
+                    console.error("反馈处理异常：", err);
+                }
+            }
+        }
+
+        async function handleTransferToHuman(messageId, qaRecordId) {
+            const messageElement = document.getElementById(messageId);
+            if (!messageElement) return;
+
+            const actualQaId = qaRecordId || messageElement.dataset.qaId;
+
+            console.log("转人工 qaId:", actualQaId);
+
+            // 更新界面按钮状态
+            const feedbackButtons = messageElement.querySelectorAll('.feedback-btn');
+            feedbackButtons.forEach(btn => {
+                btn.disabled = true;
+                btn.style.opacity = '0.5';
+            });
+
+            // 设置会话状态为转人工中
+            currentSessionMode = "human_pending";
+
+            // 添加系统提示
+            addSystemMessage('已为您转接人工客服，客服将根据当前问题继续处理。');
+
+            // 如果有 qaRecordId，更新 Supabase
+            if (actualQaId && window.supabaseClient) {
+                try {
+                    // 更新 qa_records
+                    const { data: updatedRecord, error: updateError } = await window.supabaseClient
+                        .from("qa_records")
+                        .update({
+                            need_human: true,
+                            risk_level: '中'
+                        })
+                        .eq("id", actualQaId)
+                        .select()
+                        .single();
+
+                    if (updateError) {
+                        console.error("更新 qa_records 转人工失败：", updateError);
+                        return;
+                    }
+
+                    console.log("qa_records 转人工更新成功:", updatedRecord);
+
+                    // 创建工单
+                    const { data: ticketData, error: ticketError } = await window.supabaseClient
+                        .from("tickets")
+                        .insert({
+                            qa_id: actualQaId,
+                            user_question: updatedRecord.user_question,
+                            risk_type: "用户主动转人工",
+                            priority: "高",
+                            status: "待接入",
+                            ai_judgement: "用户主动要求人工处理或当前回答未完全解决问题。",
+                            transfer_reason: "用户主动转人工，需客服进一步跟进。",
+                            suggested_reply: "请客服结合用户问题、订单信息和售后政策继续处理。"
+                        })
+                        .select()
+                        .single();
+
+                    if (ticketError) {
+                        console.error("tickets 写入失败：", ticketError);
+                    } else {
+                        console.log("tickets 写入成功:", ticketData);
+
+                        // 保存当前工单ID
+                        currentTicketId = ticketData.id;
+
+                        // 写入 localStorage
+                        localStorage.setItem("petcare_current_ticket_id", currentTicketId);
+                        localStorage.setItem("petcare_session_mode", currentSessionMode);
+
+                        console.log("当前工单ID:", currentTicketId);
+
+                        // 订阅该工单的消息
+                        subscribeToTicketMessages(ticketData.id);
+                    }
+                } catch (err) {
+                    console.error("转人工处理异常：", err);
+                }
+            }
+
+            updateAnalysis();
+        }
+
+        function updateAnalysis() {
+            const duration = Math.floor((Date.now() - sessionStartTime) / 60000);
+            document.getElementById('analysisDuration').textContent = duration + ' 分钟';
+
+            if (sessionAnalysis.questionType) {
+                document.getElementById('analysisType').textContent = sessionAnalysis.questionType;
+            }
+
+            if (sessionAnalysis.riskLevel) {
+                document.getElementById('analysisRisk').textContent = sessionAnalysis.riskLevel === '高' ? '高风险' : '低风险';
+                document.getElementById('analysisRisk').className = sessionAnalysis.riskLevel === '高' ? 'analysis-value danger' : 'analysis-value success';
+            }
+
+            if (sessionAnalysis.lastUserMessage) {
+                const knowledgeMatch = searchKnowledge(sessionAnalysis.lastUserMessage);
+                if (knowledgeMatch) {
+                    sessionAnalysis.knowledgeHit = true;
+                    sessionAnalysis.knowledgeSources = knowledgeMatch.sources;
+                }
+            }
+
+            if (sessionAnalysis.knowledgeHit) {
+                document.getElementById('analysisHit').textContent = '已命中';
+                document.getElementById('analysisHit').className = 'analysis-value success';
+            } else if (sessionAnalysis.lastUserMessage) {
+                document.getElementById('analysisHit').textContent = '未命中';
+                document.getElementById('analysisHit').className = 'analysis-value';
+            }
+
+            if (sessionAnalysis.knowledgeSources && sessionAnalysis.knowledgeSources.length > 0) {
+                const sourcesList = document.getElementById('sourcesList');
+                sourcesList.innerHTML = sessionAnalysis.knowledgeSources.map(source =>
+                    `<div class="source-item">📄 ${source}</div>`
+                ).join('');
+            } else if (sessionAnalysis.lastUserMessage) {
+                const knowledgeMatch = searchKnowledge(sessionAnalysis.lastUserMessage);
+                if (knowledgeMatch && knowledgeMatch.sources.length > 0) {
+                    const sourcesList = document.getElementById('sourcesList');
+                    sourcesList.innerHTML = knowledgeMatch.sources.map(source =>
+                        `<div class="source-item">📄 ${source}</div>`
+                    ).join('');
+                }
+            }
+
+            if (sessionAnalysis.riskLevel === '高') {
+                document.getElementById('riskAlertCard').style.display = 'block';
+                const riskAlertDesc = document.getElementById('riskAlertDesc');
+                if (sessionAnalysis.questionType) {
+                    riskAlertDesc.textContent = `检测到 ${sessionAnalysis.questionType}，已自动转人工处理`;
+                }
+            }
+        }
+
+        async function writeUserMessageToTicket(message) {
+            if (!currentTicketId) {
+                console.error("无法写入消息：currentTicketId 为空");
+                throw new Error("currentTicketId 为空");
+            }
+
+            if (!window.supabaseClient) {
+                console.error("无法写入消息：Supabase 未初始化");
+                throw new Error("Supabase 未初始化");
+            }
+
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('ticket_messages')
+                    .insert({
+                        ticket_id: currentTicketId,
+                        qa_id: null,
+                        sender: 'user',
+                        message: message
+                    })
+                    .select()
+                    .single();
+
+                if (error) {
+                    console.error("写入用户消息失败：", error);
+                    throw error;
+                }
+
+                console.log("C端用户消息写入 ticket_messages 成功:", data);
+                return data;
+            } catch (err) {
+                console.error("写入消息异常：", err);
+                throw err;
+            }
+        }
+
+        function subscribeToTicketMessages(ticketId) {
+            if (!window.supabaseClient) {
+                console.error("Supabase 未初始化，无法订阅消息");
+                return;
+            }
+
+            window.supabaseClient
+                .channel(`ticket-${ticketId}-messages`)
+                .on(
+                    "postgres_changes",
+                    { event: "INSERT", schema: "public", table: "ticket_messages", filter: `ticket_id=eq.${ticketId}` },
+                    (payload) => {
+                        console.log("C端收到人工消息：", payload);
+                        const message = payload.new;
+
+                        // 用户自己的消息已经在本地显示了，不需要重复渲染
+                        if (message.sender === 'user') {
+                            console.log("C端收到用户自己的消息（忽略重复渲染）:", message.message);
+                            return;
+                        }
+
+                        if (message.sender === 'agent') {
+                            console.log("C端收到人工客服消息");
+                            addHumanMessage(message.message);
+                        } else if (message.sender === 'system') {
+                            addSystemMessage(message.message);
+
+                            // 检测是否是解决确认消息
+                            if (message.message.includes('客服认为本次问题已处理完成')) {
+                                showResolutionConfirm();
+                            }
+
+                            // 检测是否是问题已解决消息
+                            if (message.message.includes('用户已确认问题解决')) {
+                                document.getElementById('resolutionConfirmCard')?.remove();
+                                addSystemMessage('感谢确认，本次人工服务已结束。');
+                                currentSessionMode = "ai";
+                            }
+
+                            // 检测是否是问题未解决消息
+                            if (message.message.includes('用户反馈问题仍未解决')) {
+                                document.getElementById('resolutionConfirmCard')?.remove();
+                                addSystemMessage('人工客服将继续为您处理，请稍候。');
+                            }
+                        }
+                    }
+                )
+                .subscribe();
+
+            // 订阅工单状态变化
+            window.supabaseClient
+                .channel(`ticket-${ticketId}-status`)
+                .on(
+                    "postgres_changes",
+                    { event: "UPDATE", schema: "public", table: "tickets", filter: `id=eq.${ticketId}` },
+                    (payload) => {
+                        console.log("工单状态变化：", payload);
+                        const newStatus = payload.new.status;
+
+                        if (newStatus === '处理中') {
+                            currentSessionMode = "human_active";
+                            addSystemMessage('人工客服已接入，正在为您处理问题。');
+                        } else if (newStatus === '待用户确认') {
+                            // 状态已更新，但消息会单独处理
+                        } else if (newStatus === '已解决') {
+                            currentSessionMode = "ai";
+                        }
+                    }
+                )
+                .subscribe();
+        }
+
+        function subscribeToQARecords() {
+            if (!window.supabaseClient) {
+                console.error("Supabase 未初始化，无法订阅 qa_records");
+                return;
+            }
+
+            if (qaRecordsSubscription) {
+                console.log("已存在 qa_records 订阅，移除旧订阅");
+                qaRecordsSubscription.unsubscribe();
+            }
+
+            console.log("开始订阅 qa_records 变化");
+
+            qaRecordsSubscription = window.supabaseClient
+                .channel('qa-records-channel')
+                .on(
+                    'postgres_changes',
+                    { event: 'UPDATE', schema: 'public', table: 'qa_records' },
+                    async (payload) => {
+                        const updatedRecord = payload.new;
+                        const qaRecordId = updatedRecord.id;
+                        console.log("qa_records 更新事件:", qaRecordId, updatedRecord.response_status, updatedRecord);
+
+                        if (pendingQARecords.has(qaRecordId)) {
+                            const pendingInfo = pendingQARecords.get(qaRecordId);
+
+                            if (updatedRecord.response_status === 'done' && updatedRecord.ai_answer) {
+                                console.log("AI 答案已准备好:", qaRecordId, updatedRecord.ai_answer.substring(0, 50) + "...");
+
+                                removeLoadingMessage();
+
+                                const finalConversationId = updatedRecord.conversation_id;
+                                if (finalConversationId) {
+                                    localStorage.setItem('dify_conversation_id', finalConversationId);
+                                }
+
+                                addAIMessage(updatedRecord.ai_answer, ['Dify 知识库'], false, qaRecordId);
+
+                                pendingQARecords.delete(qaRecordId);
+                                updateAnalysis();
+                            } else if (updatedRecord.response_status === 'error') {
+                                console.log("AI 回答生成失败:", qaRecordId, updatedRecord.error_message);
+
+                                removeLoadingMessage();
+
+                                const errorMessage = updatedRecord.error_message || "AI 服务暂时异常，请稍后重试或转人工。";
+                                addAIMessage(errorMessage, [], false, qaRecordId);
+
+                                pendingQARecords.delete(qaRecordId);
+                                updateAnalysis();
+                            }
+                        }
+                    }
+                )
+                .subscribe(status => {
+                    console.log("qa_records 订阅状态:", status);
+                });
+        }
+
+        async function restorePendingAnswers() {
+            if (!window.supabaseClient) {
+                console.error("Supabase 未初始化，无法恢复待处理答案");
+                return;
+            }
+
+            try {
+                const { data: generatingRecords, error } = await window.supabaseClient
+                    .from('qa_records')
+                    .select('*')
+                    .eq('response_status', 'generating')
+                    .order('created_at', { ascending: false })
+                    .limit(10);
+
+                if (error) {
+                    console.error("查询待处理 qa_records 失败:", error);
+                    return;
+                }
+
+                if (generatingRecords && generatingRecords.length > 0) {
+                    console.log("发现待处理的 qa_records:", generatingRecords.length);
+
+                    for (const record of generatingRecords) {
+                        pendingQARecords.set(record.id, {
+                            userQuestion: record.user_question,
+                            loadingMessage: false,
+                            needsDisplay: true
+                        });
+                    }
+                }
+
+                const { data: doneRecords, error: doneError } = await window.supabaseClient
+                    .from('qa_records')
+                    .select('*')
+                    .eq('response_status', 'done')
+                    .order('created_at', { ascending: false })
+                    .limit(10);
+
+                if (!doneError && doneRecords && doneRecords.length > 0) {
+                    console.log("发现已完成但可能未显示的 qa_records:", doneRecords.length);
+
+                    const chatQuestions = chatMessages.filter(m => m.role === 'user').map(m => m.content);
+
+                    for (const record of doneRecords) {
+                        const isAlreadyDisplayed = chatMessages.some(
+                            m => m.role === 'ai' && m.content === record.ai_answer
+                        );
+
+                        const isRecentQuestion = chatQuestions.some(q =>
+                            record.user_question.includes(q) || q.includes(record.user_question)
+                        );
+
+                        if (!isAlreadyDisplayed && record.ai_answer) {
+                            console.log("显示之前未完成的 AI 答案:", record.id, record.ai_answer.substring(0, 50) + "...");
+                            addAIMessage(record.ai_answer, ['Dify 知识库'], false, record.id);
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error("恢复待处理答案异常:", err);
+            }
+        }
+
+        function addHumanMessage(text) {
+            const messages = document.getElementById('chatMessages');
+            const time = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+
+            messages.innerHTML += `
+                <div class="message ai human">
+                    <div class="message-avatar">K</div>
+                    <div class="message-content">
+                        <div class="message-bubble human-bubble">${text}</div>
+                        <div class="message-meta">
+                            <span class="message-time">${time}</span>
+                            <span class="message-avatar-name">人工客服 · 小K</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function showResolutionConfirm() {
+            const messages = document.getElementById('chatMessages');
+
+            const confirmCard = `
+                <div id="resolutionConfirmCard" class="resolution-confirm-card">
+                    <div class="resolution-confirm-title">本次问题是否已经解决？</div>
+                    <div class="resolution-confirm-desc">请确认您的问题是否已得到满意解决</div>
+                    <div class="resolution-confirm-actions">
+                        <button class="btn btn-success" onclick="handleResolutionConfirm(true)">✅ 已解决</button>
+                        <button class="btn btn-secondary" onclick="handleResolutionConfirm(false)">❌ 未解决</button>
+                    </div>
+                </div>
+            `;
+
+            messages.innerHTML += confirmCard;
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        async function handleResolutionConfirm(isResolved) {
+            if (!currentTicketId) {
+                console.error("无法确认：currentTicketId 为空");
+                return;
+            }
+
+            if (!window.supabaseClient) {
+                console.error("无法确认：Supabase 未初始化");
+                return;
+            }
+
+            try {
+                if (isResolved) {
+                    // 用户确认已解决
+                    console.log("用户确认已解决结果：已解决");
+
+                    await window.supabaseClient
+                        .from('tickets')
+                        .update({
+                            status: '已解决',
+                            resolved_by: 'user',
+                            resolved_at: new Date().toISOString(),
+                            resolution_note: '用户确认问题已解决'
+                        })
+                        .eq('id', currentTicketId);
+
+                    await window.supabaseClient
+                        .from('ticket_messages')
+                        .insert({
+                            ticket_id: currentTicketId,
+                            sender: 'system',
+                            message: '用户已确认问题解决，本次人工服务已结束。'
+                        });
+                } else {
+                    // 用户反馈未解决
+                    console.log("用户确认已解决结果：未解决");
+
+                    await window.supabaseClient
+                        .from('tickets')
+                        .update({ status: '处理中' })
+                        .eq('id', currentTicketId);
+
+                    await window.supabaseClient
+                        .from('ticket_messages')
+                        .insert({
+                            ticket_id: currentTicketId,
+                            sender: 'system',
+                            message: '用户反馈问题仍未解决，人工客服将继续处理。'
+                        });
+                }
+            } catch (err) {
+                console.error("确认处理异常：", err);
+            }
+        }
+
+        // 页面加载时初始化
+        document.addEventListener("DOMContentLoaded", () => {
+            // 从 localStorage 加载聊天记录
+            chatMessages = loadChatMessages();
+
+            // 从 localStorage 恢复工单ID和会话模式
+            const savedTicketId = localStorage.getItem("petcare_current_ticket_id");
+            const savedSessionMode = localStorage.getItem("petcare_session_mode");
+
+            if (savedTicketId) {
+                currentTicketId = savedTicketId;
+                console.log("恢复工单ID:", currentTicketId);
+
+                // 订阅该工单的消息
+                subscribeToTicketMessages(currentTicketId);
+            }
+
+            if (savedSessionMode) {
+                currentSessionMode = savedSessionMode;
+                console.log("恢复会话模式:", currentSessionMode);
+            }
+
+            if (chatMessages.length > 0) {
+                // 有历史消息，渲染历史记录
+                renderChatMessages(chatMessages);
+
+                // 检查历史消息中是否有明确的转人工系统消息
+                const hasTransferMsg = chatMessages.some(m =>
+                    m.role === 'system' &&
+                    m.content.includes('已为您转接人工客服')
+                );
+                if (hasTransferMsg) {
+                    currentSessionMode = "human_pending";
+                }
+            } else {
+                // 没有历史消息，显示默认欢迎语
+                addAIMessage("您好！我是 PetCare AI 智能客服，很高兴为您服务。请问有什么可以帮您咨询的？", [], false, null);
+            }
+
+            // 订阅 qa_records 变化
+            subscribeToQARecords();
+
+            // 恢复未完成的 AI 答案
+            setTimeout(() => {
+                restorePendingAnswers();
+            }, 1000);
+        });
+
+        // Supabase 连接测试函数
+        async function testSupabaseConnection() {
+            const btn = document.getElementById('testSupabaseBtn');
+            const originalText = btn.innerHTML;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle class="animate-spin" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/></svg> 测试中...';
+
+            console.log('=== Supabase 连接测试开始 ===');
+            console.log('Supabase URL 是否存在:', !!window.supabaseClient?.url);
+            console.log('Supabase Key 是否存在:', !!window.supabaseClient?.headers?.apikey);
+
+            if (!window.supabaseClient) {
+                console.error('错误: Supabase client 未初始化');
+                alert('❌ Supabase client 未初始化\n\n请检查 Supabase SDK 是否正确加载');
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                return;
+            }
+
+            const tableName = 'connection_test';
+            
+            try {
+                console.log(`开始查询表: ${tableName}`);
+                
+                const { data, error } = await window.supabaseClient
+                    .from(tableName)
+                    .select('*')
+                    .limit(10);
+
+                console.log('查询的表名:', tableName);
+                console.log('返回的 data:', data);
+                console.log('返回的 error:', error);
+
+                if (error) {
+                    console.error('Supabase 查询失败:', error);
+                    
+                    const errorMsg = `❌ Supabase 连接失败\n\n错误代码: ${error.code || 'N/A'}\n错误信息: ${error.message || 'N/A'}\n错误详情: ${error.details || 'N/A'}`;
+                    alert(errorMsg);
+                } else {
+                    console.log('✅ Supabase 连接成功');
+                    
+                    let dataDisplay = '';
+                    if (data && data.length > 0) {
+                        dataDisplay = `\n\n查询到 ${data.length} 条数据:\n`;
+                        data.forEach((item, index) => {
+                            dataDisplay += `${index + 1}. ${JSON.stringify(item)}\n`;
+                        });
+                    } else {
+                        dataDisplay = '\n\n表为空，但连接成功';
+                    }
+                    
+                    alert(`✅ Supabase 连接成功${dataDisplay}`);
+                }
+            } catch (err) {
+                console.error('Supabase 连接异常:', err);
+                
+                const errorMsg = `❌ Supabase 连接异常\n\n异常类型: ${err.name || 'Unknown'}\n异常信息: ${err.message || 'N/A'}`;
+                alert(errorMsg);
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+            
+            console.log('=== Supabase 连接测试结束 ===');
+        }
+    </script>
+</body>
+
+</html>
+

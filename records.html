@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>问答记录 - PetCare AI</title>
+    <link rel="stylesheet" href="css/design-tokens.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+            background: var(--bg-page);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-header {
+            background: var(--bg-card);
+            padding: var(--space-5) var(--space-6);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-header-left h1 {
+            font-size: var(--font-xl);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 4px 0;
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .page-header-left .subtitle {
+            font-size: var(--font-sm);
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .page-container {
+            flex: 1;
+            padding: var(--space-6);
+        }
+
+        .filter-bar {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            padding: var(--space-4) var(--space-5);
+            margin-bottom: var(--space-5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: var(--space-2);
+        }
+
+        .filter-tab {
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-md);
+            font-size: var(--font-sm);
+            cursor: pointer;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid transparent;
+            transition: all var(--transition-fast);
+        }
+
+        .filter-tab:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .filter-tab.active {
+            background: var(--primary-bg);
+            color: var(--primary-dark);
+            border-color: var(--primary-border);
+            font-weight: 500;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: var(--space-3);
+        }
+
+        .search-input {
+            padding: var(--space-2) var(--space-3);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-md);
+            font-size: var(--font-sm);
+            width: 200px;
+            outline: none;
+            transition: border-color var(--transition-fast);
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+        }
+
+        .main-panel {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: var(--space-4) var(--space-5);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--gray-50);
+        }
+
+        .panel-title {
+            font-size: var(--font-md);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .panel-meta {
+            font-size: var(--font-sm);
+            color: var(--text-muted);
+        }
+
+        .record-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .record-table th {
+            background: var(--gray-50);
+            padding: var(--space-3) var(--space-4);
+            text-align: left;
+            font-size: var(--font-sm);
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-default);
+            white-space: nowrap;
+        }
+
+        .record-table td {
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--border-light);
+            font-size: var(--font-sm);
+            color: var(--text-secondary);
+            vertical-align: top;
+        }
+
+        .record-table tbody tr:hover {
+            background: var(--bg-hover);
+        }
+
+        .record-question-cell {
+            max-width: 280px;
+        }
+
+        .record-question-text {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: var(--space-2);
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .record-time {
+            font-size: var(--font-xs);
+            color: var(--text-muted);
+        }
+
+        .record-answer-cell {
+            max-width: 320px;
+        }
+
+        .record-answer-text {
+            color: var(--text-secondary);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .record-type {
+            display: block;
+            margin-top: var(--space-1);
+            font-size: var(--font-xs);
+            color: var(--text-muted);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            font-size: var(--font-xs);
+            font-weight: 500;
+        }
+
+        .status-badge.resolved {
+            background: var(--success-bg);
+            color: var(--success-dark);
+        }
+
+        .status-badge.transferred {
+            background: var(--warning-bg);
+            color: var(--warning-dark);
+        }
+
+        .status-badge.pending {
+            background: var(--info-bg);
+            color: var(--info);
+        }
+
+        .status-badge.risk {
+            background: var(--danger-bg);
+            color: var(--danger-dark);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: var(--space-4);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="project-index.html" class="sidebar-logo">
+                    <div class="sidebar-logo-icon">🐾</div>
+                    <span class="sidebar-logo-text">PetCare AI</span>
+                </a>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">运营概览</div>
+                    <a href="project-index.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M3 9h18M9 21V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </span>
+                        <span>数据看板</span>
+                        <span class="nav-item-badge success" hidden></span>
+                    </a>
+                    <a href="dashboard.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 20V10M18 20V4M6 20v-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </span>
+                        <span>数据分析</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">客服运营</div>
+                    <a href="chat.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </span>
+                        <span>智能客服</span>
+                    </a>
+                    <a href="records.html" class="nav-item active">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </span>
+                        <span>问答记录</span>
+                    </a>
+                    <a href="transfer.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8.5" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+                        </span>
+                        <span>转接中心</span>
+                        <span class="nav-item-badge" hidden></span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">知识管理</div>
+                    <a href="knowledge.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </span>
+                        <span>知识库</span>
+                    </a>
+                    <a href="feedback.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </span>
+                        <span>反馈分析</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">K</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name">管理员</div>
+                        <div class="sidebar-user-role">运营人员</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <div class="page-header-left">
+                    <h1>📝 问答记录</h1>
+                    <p class="subtitle">用户咨询记录、AI回答结果与处理状态追踪</p>
+                </div>
+            </div>
+
+            <div class="page-container">
+                <div class="supabase-test-card" style="background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-light); padding: var(--space-5); margin-bottom: var(--space-5);">
+                    <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3);">
+                        <span style="font-size: 20px;">🔌</span>
+                        <h3 style="margin: 0; font-size: var(--font-md); font-weight: 600; color: var(--text-primary);">Supabase 连接测试</h3>
+                    </div>
+                    <div id="supabaseTestResult" style="font-size: var(--font-sm); color: var(--text-muted);">
+                        正在测试连接...
+                    </div>
+                </div>
+
+                <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">📋</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalRecordsCount">0</div>
+                            <div class="stat-label">总记录数</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">✅</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="todayRecordsCount">0</div>
+                            <div class="stat-label">今日记录</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">✅</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="autoResolvedCount">0</div>
+                            <div class="stat-label">AI已解决</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon red">👤</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="needHumanCount">0</div>
+                            <div class="stat-label">需人工处理</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-bar">
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" onclick="filterRecords('all')">全部</button>
+                        <button class="filter-tab" onclick="filterRecords('resolved')">已解决</button>
+                        <button class="filter-tab" onclick="filterRecords('pending')">未解决</button>
+                        <button class="filter-tab" onclick="filterRecords('transferred')">已转人工</button>
+                        <button class="filter-tab" onclick="filterRecords('risky')">高风险</button>
+                        <button class="filter-tab" onclick="filterRecords('negative')">差评</button>
+                    </div>
+                    <div class="filter-actions">
+                        <input type="text" class="search-input" placeholder="搜索问题内容..." id="searchInput" oninput="searchRecords()">
+                    </div>
+                </div>
+
+                <div class="main-panel">
+                    <div class="panel-header">
+                        <span class="panel-title">最近问答记录</span>
+                        <span class="panel-meta">共 <span id="recordCount">0</span> 条</span>
+                    </div>
+                    <table class="record-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">用户问题</th>
+                                <th style="width: 35%;">AI 回答</th>
+                                <th style="width: 15%;">状态</th>
+                                <th style="width: 20%;">时间</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recordList"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onload="initSupabase()"></script>
+    <script>
+        function initSupabase() {
+            console.log("=== Supabase SDK CDN 加载完成 ===");
+            console.log("window.supabase 是否存在:", !!window.supabase);
+            
+            const SUPABASE_URL = "https://ihrzsxhbrvlogsahkmsgq.supabase.co";
+            const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlocnpzeHhydmxvZ3NhaGttc2dxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NjI3ODMsImV4cCI6MjA5NTMzODc4M30.oj2E2c5pKbARb2QJo571znep3jpVJlZrDGbbFOa0C8s";
+            
+            window.SUPABASE_URL = SUPABASE_URL;
+            window.SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;
+            
+            console.log("=== Supabase 配置 ===");
+            console.log("SUPABASE_URL:", !!SUPABASE_URL);
+            console.log("SUPABASE_ANON_KEY:", !!SUPABASE_ANON_KEY);
+            
+            if (window.supabase) {
+                try {
+                    window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    console.log("✅ Supabase client 初始化成功");
+                    
+                    // 加载 records.js
+                    const script = document.createElement('script');
+                    script.src = 'js/records.js';
+                    document.body.appendChild(script);
+                } catch (error) {
+                    console.error("❌ Supabase client 初始化失败:", error);
+                    window.supabaseClient = null;
+                }
+            } else {
+                console.error("❌ window.supabase 不存在！");
+                window.supabaseClient = null;
+            }
+        }
+    </script>
+    <script>
+        async function testSupabaseConnection() {
+            const resultElement = document.getElementById('supabaseTestResult');
+            
+            console.log('=== Supabase 连接测试开始 ===');
+            console.log('Supabase URL 是否存在:', !!window.SUPABASE_URL);
+            console.log('Supabase Key 是否存在:', !!window.SUPABASE_ANON_KEY);
+            
+            // 等待 client 初始化
+            if (!window.supabaseClient) {
+                resultElement.innerHTML = `<div style="color: var(--warning); font-weight: 600;">⏳ 正在等待 Supabase client 初始化...</div>`;
+                
+                // 等待最多 3 秒
+                await new Promise(resolve => {
+                    let attempts = 0;
+                    const checkInterval = setInterval(() => {
+                        attempts++;
+                        if (window.supabaseClient || attempts >= 30) {
+                            clearInterval(checkInterval);
+                            resolve();
+                        }
+                    }, 100);
+                });
+            }
+            
+            if (!window.supabaseClient) {
+                const errorMsg = 'Supabase client 未初始化';
+                console.error('错误:', errorMsg);
+                resultElement.innerHTML = `<div style="color: var(--danger); font-weight: 600;">❌ ${errorMsg}</div>`;
+                return;
+            }
+            
+            try {
+                console.log('开始查询 qa_records 表...');
+                
+                const { data, error } = await window.supabaseClient
+                    .from('qa_records')
+                    .select('*')
+                    .limit(5);
+                
+                console.log('查询结果:', data);
+                console.log('错误信息:', error);
+                
+                if (error) {
+                    console.error('Supabase 查询失败:', error);
+                    resultElement.innerHTML = `
+                        <div style="color: var(--danger);">
+                            <div style="font-weight: 600; margin-bottom: 8px;">❌ Supabase 连接失败</div>
+                            <div style="background: var(--danger-bg); padding: 12px; border-radius: var(--radius-md); font-family: monospace; font-size: 12px;">
+                                <div><strong>错误代码:</strong> ${error.code || 'N/A'}</div>
+                                <div><strong>错误信息:</strong> ${error.message || 'N/A'}</div>
+                                <div><strong>错误详情:</strong> ${error.details || 'N/A'}</div>
+                                <div><strong>错误提示:</strong> ${error.hint || 'N/A'}</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    console.log('Supabase 连接成功，查询到', data?.length || 0, '条数据');
+                    resultElement.innerHTML = `
+                        <div style="color: var(--success);">
+                            <div style="font-weight: 600; margin-bottom: 8px;">✅ Supabase 连接成功</div>
+                            <div style="background: var(--success-bg); padding: 12px; border-radius: var(--radius-md);">
+                                <div>成功查询到 <strong>${data?.length || 0}</strong> 条数据</div>
+                                ${data && data.length > 0 ? `
+                                    <div style="margin-top: 8px; font-size: 11px; color: var(--text-muted);">
+                                        数据预览: ${JSON.stringify(data[0]).substring(0, 100)}...
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                console.error('Supabase 连接异常:', err);
+                resultElement.innerHTML = `
+                    <div style="color: var(--danger);">
+                        <div style="font-weight: 600; margin-bottom: 8px;">❌ Supabase 连接异常</div>
+                        <div style="background: var(--danger-bg); padding: 12px; border-radius: var(--radius-md); font-family: monospace; font-size: 12px;">
+                            <div><strong>异常类型:</strong> ${err.name || 'Unknown'}</div>
+                            <div><strong>异常信息:</strong> ${err.message || 'N/A'}</div>
+                            <div><strong>异常堆栈:</strong> ${err.stack?.substring(0, 200) || 'N/A'}...</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            console.log('=== Supabase 连接测试结束 ===');
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(testSupabaseConnection, 500);
+        });
+    </script>
+</body>
+</html>
