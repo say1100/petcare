@@ -140,11 +140,12 @@
         .record-table {
             width: 100%;
             border-collapse: collapse;
+            table-layout: fixed;
         }
 
         .record-table th {
             background: var(--gray-50);
-            padding: var(--space-3) var(--space-4);
+            padding: 14px var(--space-5);
             text-align: left;
             font-size: var(--font-sm);
             font-weight: 600;
@@ -154,7 +155,7 @@
         }
 
         .record-table td {
-            padding: var(--space-4);
+            padding: 18px var(--space-5);
             border-bottom: 1px solid var(--border-light);
             font-size: var(--font-sm);
             color: var(--text-secondary);
@@ -166,13 +167,13 @@
         }
 
         .record-question-cell {
-            max-width: 280px;
+            width: 32%;
         }
 
         .record-question-text {
-            font-weight: 500;
+            font-weight: 600;
             color: var(--text-primary);
-            margin-bottom: var(--space-2);
+            margin-bottom: 10px;
             display: block;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -180,12 +181,16 @@
         }
 
         .record-time {
+            display: inline-block;
+            min-width: 78px;
             font-size: var(--font-xs);
+            font-weight: 600;
             color: var(--text-muted);
+            white-space: nowrap;
         }
 
         .record-answer-cell {
-            max-width: 320px;
+            width: 38%;
         }
 
         .record-answer-text {
@@ -198,9 +203,15 @@
             overflow: hidden;
         }
 
+        .record-answer-source {
+            display: block;
+            margin-top: 8px;
+            font-size: var(--font-xs);
+            color: var(--primary);
+        }
+
         .record-type {
             display: block;
-            margin-top: var(--space-1);
             font-size: var(--font-xs);
             color: var(--text-muted);
         }
@@ -208,10 +219,11 @@
         .status-badge {
             display: inline-flex;
             align-items: center;
-            padding: 2px 8px;
+            padding: 4px 10px;
             border-radius: var(--radius-sm);
             font-size: var(--font-xs);
-            font-weight: 500;
+            font-weight: 600;
+            white-space: nowrap;
         }
 
         .status-badge.resolved {
@@ -225,8 +237,8 @@
         }
 
         .status-badge.pending {
-            background: var(--info-bg);
-            color: var(--info);
+            background: var(--gray-100);
+            color: var(--text-muted);
         }
 
         .status-badge.risk {
@@ -410,133 +422,41 @@
         </main>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onload="initSupabase()"></script>
-    <script>
-        function initSupabase() {
-            console.log("=== Supabase SDK CDN 加载完成 ===");
-            console.log("window.supabase 是否存在:", !!window.supabase);
-            
-            const SUPABASE_URL = "https://ihrzsxhbrvlogsahkmsgq.supabase.co";
-            const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlocnpzeHhydmxvZ3NhaGttc2dxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NjI3ODMsImV4cCI6MjA5NTMzODc4M30.oj2E2c5pKbARb2QJo571znep3jpVJlZrDGbbFOa0C8s";
-            
-            window.SUPABASE_URL = SUPABASE_URL;
-            window.SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;
-            
-            console.log("=== Supabase 配置 ===");
-            console.log("SUPABASE_URL:", !!SUPABASE_URL);
-            console.log("SUPABASE_ANON_KEY:", !!SUPABASE_ANON_KEY);
-            
-            if (window.supabase) {
-                try {
-                    window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                    console.log("✅ Supabase client 初始化成功");
-                    
-                    // 加载 records.js
-                    const script = document.createElement('script');
-                    script.src = 'js/records.js';
-                    document.body.appendChild(script);
-                } catch (error) {
-                    console.error("❌ Supabase client 初始化失败:", error);
-                    window.supabaseClient = null;
-                }
-            } else {
-                console.error("❌ window.supabase 不存在！");
-                window.supabaseClient = null;
-            }
-        }
-    </script>
+    <script src="js/supabaseClient.js"></script>
+    <script src="js/records.js"></script>
     <script>
         async function testSupabaseConnection() {
             const resultElement = document.getElementById('supabaseTestResult');
-            
-            console.log('=== Supabase 连接测试开始 ===');
-            console.log('Supabase URL 是否存在:', !!window.SUPABASE_URL);
-            console.log('Supabase Key 是否存在:', !!window.SUPABASE_ANON_KEY);
-            
-            // 等待 client 初始化
+            if (!resultElement) return;
+
             if (!window.supabaseClient) {
-                resultElement.innerHTML = `<div style="color: var(--warning); font-weight: 600;">⏳ 正在等待 Supabase client 初始化...</div>`;
-                
-                // 等待最多 3 秒
-                await new Promise(resolve => {
-                    let attempts = 0;
-                    const checkInterval = setInterval(() => {
-                        attempts++;
-                        if (window.supabaseClient || attempts >= 30) {
-                            clearInterval(checkInterval);
-                            resolve();
-                        }
-                    }, 100);
-                });
-            }
-            
-            if (!window.supabaseClient) {
-                const errorMsg = 'Supabase client 未初始化';
-                console.error('错误:', errorMsg);
-                resultElement.innerHTML = `<div style="color: var(--danger); font-weight: 600;">❌ ${errorMsg}</div>`;
+                resultElement.innerHTML = '<span style="color: var(--danger);">❌ Supabase client 未初始化</span>';
                 return;
             }
-            
+
             try {
-                console.log('开始查询 qa_records 表...');
-                
                 const { data, error } = await window.supabaseClient
                     .from('qa_records')
                     .select('*')
                     .limit(5);
-                
-                console.log('查询结果:', data);
-                console.log('错误信息:', error);
-                
+
                 if (error) {
-                    console.error('Supabase 查询失败:', error);
-                    resultElement.innerHTML = `
-                        <div style="color: var(--danger);">
-                            <div style="font-weight: 600; margin-bottom: 8px;">❌ Supabase 连接失败</div>
-                            <div style="background: var(--danger-bg); padding: 12px; border-radius: var(--radius-md); font-family: monospace; font-size: 12px;">
-                                <div><strong>错误代码:</strong> ${error.code || 'N/A'}</div>
-                                <div><strong>错误信息:</strong> ${error.message || 'N/A'}</div>
-                                <div><strong>错误详情:</strong> ${error.details || 'N/A'}</div>
-                                <div><strong>错误提示:</strong> ${error.hint || 'N/A'}</div>
-                            </div>
-                        </div>
-                    `;
+                    resultElement.innerHTML = `<span style="color: var(--danger);">❌ 连接失败: ${error.message}</span>`;
                 } else {
-                    console.log('Supabase 连接成功，查询到', data?.length || 0, '条数据');
-                    resultElement.innerHTML = `
-                        <div style="color: var(--success);">
-                            <div style="font-weight: 600; margin-bottom: 8px;">✅ Supabase 连接成功</div>
-                            <div style="background: var(--success-bg); padding: 12px; border-radius: var(--radius-md);">
-                                <div>成功查询到 <strong>${data?.length || 0}</strong> 条数据</div>
-                                ${data && data.length > 0 ? `
-                                    <div style="margin-top: 8px; font-size: 11px; color: var(--text-muted);">
-                                        数据预览: ${JSON.stringify(data[0]).substring(0, 100)}...
-                                    </div>
-                                ` : ''}
-                            </div>
-                        </div>
-                    `;
+                    resultElement.innerHTML = `<span style="color: var(--success);">✅ Supabase 连接成功，查询到 ${data?.length || 0} 条记录</span>`;
                 }
             } catch (err) {
-                console.error('Supabase 连接异常:', err);
-                resultElement.innerHTML = `
-                    <div style="color: var(--danger);">
-                        <div style="font-weight: 600; margin-bottom: 8px;">❌ Supabase 连接异常</div>
-                        <div style="background: var(--danger-bg); padding: 12px; border-radius: var(--radius-md); font-family: monospace; font-size: 12px;">
-                            <div><strong>异常类型:</strong> ${err.name || 'Unknown'}</div>
-                            <div><strong>异常信息:</strong> ${err.message || 'N/A'}</div>
-                            <div><strong>异常堆栈:</strong> ${err.stack?.substring(0, 200) || 'N/A'}...</div>
-                        </div>
-                    </div>
-                `;
+                resultElement.innerHTML = `<span style="color: var(--danger);">❌ 异常: ${err.message}</span>`;
             }
-            
-            console.log('=== Supabase 连接测试结束 ===');
         }
-        
-        document.addEventListener('DOMContentLoaded', () => {
+
+        window.addEventListener('supabaseReady', () => {
             setTimeout(testSupabaseConnection, 500);
         });
+
+        if (window.supabaseClient) {
+            setTimeout(testSupabaseConnection, 500);
+        }
     </script>
 </body>
 </html>

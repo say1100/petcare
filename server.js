@@ -12,6 +12,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname));
 
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "project-index.html"));
+});
+
 const uploadsDir = path.join(__dirname, "uploads");
 const fs = require("fs");
 if (!fs.existsSync(uploadsDir)) {
@@ -47,8 +51,20 @@ const upload = multer({
   }
 });
 
-const SUPABASE_URL = "https://kgccgfipiwfuxsjmqmzn.supabase.co";
+const SUPABASE_URL = process.env.SUPABASE_URL || "https://ihrzsxxrvlogsahkmsgq.supabase.co";
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+function difyApiUrl(pathname) {
+  const baseUrl = (process.env.DIFY_BASE_URL || "https://api.dify.ai").replace(/\/+$/, "");
+  const apiBaseUrl = baseUrl.endsWith("/v1") ? baseUrl : `${baseUrl}/v1`;
+  return `${apiBaseUrl}${pathname.startsWith("/") ? pathname : `/${pathname}`}`;
+}
+
+function getDifyDatasetId(value = process.env.DIFY_KNOWLEDGE_BASE_ID) {
+  const datasetId = String(value || "").trim();
+  if (!datasetId || datasetId === "your-knowledge-base-id") return "";
+  return datasetId;
+}
 
 let supabaseAdmin = null;
 if (SUPABASE_SERVICE_ROLE_KEY) {
@@ -71,6 +87,53 @@ function extractSources(difyData) {
     content: item.content || "",
     score: item.score || null,
   }));
+}
+
+function cleanCustomerAnswer(answer) {
+  const original = String(answer || "").trim();
+  if (!original) return "";
+
+  let text = original
+    .replace(/<think>[\s\S]*?<\/think>/gi, "")
+    .replace(/<\/?think>/gi, "")
+    .replace(/\r\n/g, "\n")
+    .trim();
+
+  const answerLabelMatch = text.match(/(?:^|\n)\s*(?:答复|回复|最终回答|客服答复)\s*[:：]\s*/);
+  if (answerLabelMatch && answerLabelMatch.index !== undefined) {
+    text = text.slice(answerLabelMatch.index + answerLabelMatch[0].length);
+  }
+
+  text = text
+    .split("\n")
+    .filter((line) => {
+      const trimmed = line.trim();
+      if (!trimmed) return true;
+      return !(
+        /^(用户询问|用户问|这个问题|这是一个|根据我的规则|根据规则|我的规则|我需要|需要包含|回答要|属于|因为涉及|不能做最终判断|应该建议)/.test(trimmed) ||
+        /^\d+[.、]\s*(这是|不要|建议|回答|需要|包含|只输出|参考|属于)/.test(trimmed)
+      );
+    })
+    .join("\n")
+    .trim();
+
+  const sourceMatch = text.match(/\n\s*参考来源\s*[:：][\s\S]*$/i);
+  let sourcePart = '';
+  if (sourceMatch) {
+    sourcePart = sourceMatch[0];
+    text = text.slice(0, sourceMatch.index);
+  }
+
+  text = text
+    .split(/\n\s*(?:注意事项|是否建议转人工|来源)\s*[:：]/)[0]
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+
+  if (sourcePart) {
+    text = text + '\n' + sourcePart.trim();
+  }
+
+  return text || original;
 }
 
 app.get("/api/health", (req, res) => {
@@ -97,12 +160,11 @@ app.post("/api/chat", async (req, res) => {
       });
     }
 
-    const difyBaseUrl = process.env.DIFY_BASE_URL || "https://api.dify.ai";
     const difyApiKey = process.env.DIFY_API_KEY;
 
     console.log("调用 Dify API:", { query, conversation_id, user });
 
-    const difyResponse = await fetch(`${difyBaseUrl}/v1/chat-messages`, {
+    const difyResponse = await fetch(difyApiUrl("/chat-messages"), {
       method: "POST",
       headers: {
         Authorization: `Bearer ${difyApiKey}`,
@@ -130,15 +192,16 @@ app.post("/api/chat", async (req, res) => {
     }
 
     const difyData = JSON.parse(text);
+    const aiAnswer = cleanCustomerAnswer(difyData.answer || "");
 
     console.log("Dify 返回成功:", {
-      answer: difyData.answer?.substring(0, 50),
+      answer: aiAnswer.substring(0, 50),
       conversation_id: difyData.conversation_id,
       message_id: difyData.message_id || difyData.id
     });
 
     return res.json({
-      answer: difyData.answer || "",
+      answer: aiAnswer,
       conversation_id: difyData.conversation_id || "",
       message_id: difyData.message_id || difyData.id || "",
       sources: extractSources(difyData),
@@ -175,10 +238,9 @@ app.post("/api/chat-async", async (req, res) => {
 
     console.log("异步调用 Dify API:", { qa_id, query, conversation_id, user });
 
-    const difyBaseUrl = process.env.DIFY_BASE_URL || "https://api.dify.ai";
     const difyApiKey = process.env.DIFY_API_KEY;
 
-    const difyResponse = await fetch(`${difyBaseUrl}/v1/chat-messages`, {
+    const difyResponse = await fetch(difyApiUrl("/chat-messages"), {
       method: "POST",
       headers: {
         Authorization: `Bearer ${difyApiKey}`,
@@ -223,7 +285,7 @@ app.post("/api/chat-async", async (req, res) => {
 
     try {
       difyData = JSON.parse(text);
-      aiAnswer = difyData.answer || "";
+      aiAnswer = cleanCustomerAnswer(difyData.answer || "");
       sources = extractSources(difyData);
       retriever_resources = difyData.retriever_resources || [];
       finalConversationId = difyData.conversation_id || finalConversationId;
@@ -819,7 +881,11 @@ app.get("/api/dify-kb-info", async (req, res) => {
   }
 });
 
-app.listen(port, "0.0.0.0", () => {
-  console.log(`PetCare AI server running at http://localhost:${port}`);
-  console.log(`LAN access: http://<你的电脑IP>:${port}`);
-});
+if (require.main === module) {
+  app.listen(port, "0.0.0.0", () => {
+    console.log(`PetCare AI server running at http://localhost:${port}`);
+    console.log(`LAN access: http://<你的电脑IP>:${port}`);
+  });
+}
+
+module.exports = app;

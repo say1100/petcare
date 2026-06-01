@@ -1,4 +1,4 @@
-﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
@@ -974,9 +974,69 @@
             font-size: 12px;
             color: var(--text-muted);
         }
+
+        .chat-sidebar .card:first-child {
+            margin-bottom: 16px;
+            background: #ffffff;
+            border-color: #E2E8F0;
+            border-radius: 8px;
+            box-shadow: none;
+        }
+
+        .chat-sidebar .card:first-child .card-header {
+            min-height: 56px;
+            padding: 0 14px;
+            border-bottom: 1px solid #E2E8F0;
+        }
+
+        .chat-sidebar .card:first-child .card-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0F172A;
+            gap: 8px;
+        }
+
+        .chat-sidebar .card:first-child .card-title svg {
+            width: 16px;
+            height: 16px;
+            flex: 0 0 16px;
+        }
+
+        .chat-sidebar .card:first-child .card-body {
+            padding: 12px;
+        }
+
+        .chat-sidebar .card:first-child .quick-question-list {
+            gap: 9px;
+        }
+
+        .chat-sidebar .card:first-child .quick-question-item {
+            min-height: 37px;
+            padding: 0 12px;
+            background: #F8FAFC;
+            border: 1px solid transparent;
+            border-radius: 7px;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1.2;
+            box-shadow: none;
+        }
+
+        .chat-sidebar .card:first-child .quick-question-item svg {
+            width: 14px;
+            height: 14px;
+            flex: 0 0 14px;
+            color: #94A3B8;
+        }
+
+        .chat-sidebar .card:first-child .quick-question-item:hover {
+            background: #F1F5F9;
+            border-color: #E2E8F0;
+            color: #334155;
+        }
     </style>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="./js/supabaseClient.js"></script>
     <script src="js/app.js"></script>
     <script src="js/dataService.js"></script>
@@ -1625,6 +1685,57 @@
             saveChatMessages();
         }
 
+        function cleanCustomerAnswer(text) {
+            const original = String(text || '').trim();
+            if (!original) return '';
+
+            let cleaned = original
+                .replace(/<think>[\s\S]*?<\/think>/gi, '')
+                .replace(/<\/?think>/gi, '')
+                .replace(/\r\n/g, '\n')
+                .trim();
+
+            const answerLabelMatch = cleaned.match(/(?:^|\n)\s*(?:答复|回复|最终回答|客服答复)\s*[:：]\s*/);
+            if (answerLabelMatch && answerLabelMatch.index !== undefined) {
+                cleaned = cleaned.slice(answerLabelMatch.index + answerLabelMatch[0].length);
+            }
+
+            cleaned = cleaned
+                .split('\n')
+                .filter(line => {
+                    const trimmed = line.trim();
+                    if (!trimmed) return true;
+                    return !(
+                        /^(用户询问|用户问|这个问题|这是一个|根据我的规则|根据规则|我的规则|我需要|需要包含|回答要|属于|因为涉及|不能做最终判断|应该建议)/.test(trimmed) ||
+                        /^\d+[.、]\s*(这是|不要|建议|回答|需要|包含|只输出|参考|属于)/.test(trimmed)
+                    );
+                })
+                .join('\n')
+                .trim();
+
+            // 保留参考来源部分，只去除注意事项和是否建议转人工
+            const sourceMatch = cleaned.match(/\n\s*参考来源\s*[:：][\s\S]*$/i);
+            let sourcePart = '';
+            if (sourceMatch) {
+                sourcePart = sourceMatch[0];
+                cleaned = cleaned.slice(0, sourceMatch.index);
+            }
+            
+            cleaned = cleaned
+                .split(/\n\s*(?:注意事项|是否建议转人工|来源)\s*[:：]/)[0]
+                .replace(/\n{3,}/g, '\n\n')
+                .trim();
+            
+            // 如果有来源，加回去
+            if (sourcePart) {
+                cleaned = cleaned + '\n' + sourcePart.trim();
+            }
+
+            return cleaned || original;
+        }
+
+        window.cleanCustomerAnswer = cleanCustomerAnswer;
+
         function addAIMessage(text, sources, isHuman = false, qaRecordId = null) {
             const messages = document.getElementById('chatMessages');
             const time = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
@@ -1645,8 +1756,8 @@
                 </div>
             ` : '';
 
-            // 清理多余的换行（超过2个连续换行只保留2个）
-            const cleanText = text.replace(/\n{3,}/g, '\n\n');
+            // 清理多余的模型过程说明，只保留给用户看的答复。
+            const cleanText = (isHuman ? String(text || '') : cleanCustomerAnswer(text)).replace(/\n{3,}/g, '\n\n');
 
             messages.innerHTML += `
                 <div class="message ai" id="${messageId}" data-qa-id="${qaRecordId || ''}">
@@ -1667,7 +1778,7 @@
             chatMessages.push({
                 id: messageId,
                 role: 'ai',
-                content: text,
+                content: cleanText,
                 time: time,
                 qaId: qaRecordId || '',
                 feedback: '未反馈',
@@ -2382,4 +2493,3 @@
 </body>
 
 </html>
-

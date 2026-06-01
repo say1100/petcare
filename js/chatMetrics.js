@@ -100,8 +100,6 @@
     setText("chatStatTransfer", formatNumber(metrics.transferCount || 0));
     setText("chatStatSatisfaction", `${metrics.satisfaction || 0}%`);
     
-    renderRecommendedQuestions(metrics.recommendedQuestions);
-    
     updateStatusTag(data.connected);
   }
 
@@ -125,7 +123,6 @@
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    renderRecommendedQuestions(defaultQuestions);
     refreshChatMetrics().catch(console.error);
   });
 })();
