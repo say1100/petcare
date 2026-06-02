@@ -393,6 +393,96 @@ function isHighRiskRecord(record) {
   return Boolean(record.need_human || record.risk_level === "high" || record.risk_level === "高" || record.question_type);
 }
 
+function isTicketCandidateRecord(record) {
+  const text = [
+    record.user_question,
+    record.ai_answer,
+    record.question_type,
+    record.risk_level,
+  ].filter(Boolean).join(" ");
+
+  return Boolean(
+    record.need_human ||
+    record.risk_level === "high" ||
+    record.risk_level === "高" ||
+    /转人工|人工客服|是否建议转人工\s*[:：]?\s*是|宠物健康|退款纠纷|商品质量|投诉|呕吐|拉稀|不吃|生病|死亡|异物|过期/.test(text)
+  );
+}
+
+async function insertTicketAdminCompat(payload) {
+  let ticketPayload = { ...payload };
+
+  for (let attempt = 0; attempt < 8; attempt += 1) {
+    const { data, error } = await supabaseAdmin
+      .from("tickets")
+      .insert(ticketPayload)
+      .select()
+      .single();
+
+    if (!error) return { data, error: null };
+
+    const message = error.message || "";
+    const missingColumn = message.match(/column tickets\.([a-zA-Z0-9_]+) does not exist/)?.[1]
+      || message.match(/Could not find the '([^']+)' column/)?.[1];
+
+    if (!missingColumn || !(missingColumn in ticketPayload)) {
+      return { data: null, error };
+    }
+
+    console.warn(`tickets 表缺少字段 ${missingColumn}，后端同步已跳过该字段后重试`);
+    delete ticketPayload[missingColumn];
+  }
+
+  return {
+    data: null,
+    error: new Error("tickets 写入失败：表结构缺少多个字段"),
+  };
+}
+
+async function syncTicketsFromQaRecords(existingTickets = []) {
+  const existingQuestions = new Set(
+    existingTickets
+      .map((ticket) => (ticket.user_question || "").trim())
+      .filter(Boolean)
+  );
+
+  const { data: records, error } = await supabaseAdmin
+    .from("qa_records")
+    .select("id, user_question, ai_answer, need_human, risk_level, question_type, created_at")
+    .order("created_at", { ascending: false })
+    .limit(200);
+
+  if (error) throw error;
+
+  let created = 0;
+  for (const record of records || []) {
+    const question = (record.user_question || "").trim();
+    if (!question || existingQuestions.has(question) || !isTicketCandidateRecord(record)) continue;
+
+    const { data, error: insertError } = await insertTicketAdminCompat({
+      qa_id: record.id ? String(record.id) : null,
+      user_question: question,
+      risk_type: record.question_type || record.risk_level || "高风险问题",
+      priority: record.risk_level === "低" ? "中" : "高",
+      status: "待接入",
+      ai_judgement: "系统根据问答记录自动同步为人工工单。",
+      transfer_reason: record.need_human ? "AI 判断需要人工介入。" : "命中高风险/售后关键词，需人工客服复核。",
+      suggested_reply: "请客服结合用户问题、订单信息和售后政策继续处理。",
+    });
+
+    if (insertError) {
+      console.error("qa_records 同步 tickets 失败:", insertError);
+      continue;
+    }
+
+    if (data) {
+      created += 1;
+      existingQuestions.add(question);
+    }
+  }
+
+  return created;
+}
 function incrementMap(map, key) {
   const name = key || "未分类";
   map.set(name, (map.get(name) || 0) + 1);
@@ -613,18 +703,28 @@ app.get("/api/tickets", async (req, res) => {
   }
 
   try {
-    const { data, error } = await supabaseAdmin
-      .from("tickets")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(500);
+    const loadTickets = async () => {
+      const { data, error } = await supabaseAdmin
+        .from("tickets")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(500);
 
-    if (error) throw error;
+      if (error) throw error;
+      return data || [];
+    };
+
+    let tickets = await loadTickets();
+    const syncedCount = await syncTicketsFromQaRecords(tickets);
+    if (syncedCount > 0) {
+      tickets = await loadTickets();
+    }
 
     return res.json({
       connected: true,
-      tickets: data || [],
-      total: (data || []).length,
+      tickets,
+      total: tickets.length,
+      syncedCount,
       lastUpdated: new Date().toISOString(),
     });
   } catch (error) {
