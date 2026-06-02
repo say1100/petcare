@@ -603,6 +603,76 @@ app.get("/api/dashboard-metrics", async (req, res) => {
     });
   }
 });
+app.get("/api/tickets", async (req, res) => {
+  if (!supabaseAdmin) {
+    return res.status(503).json({
+      connected: false,
+      tickets: [],
+      message: "数据库未连接，请配置 SUPABASE_SERVICE_ROLE_KEY",
+    });
+  }
+
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("tickets")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(500);
+
+    if (error) throw error;
+
+    return res.json({
+      connected: true,
+      tickets: data || [],
+      total: (data || []).length,
+      lastUpdated: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("/api/tickets error:", error);
+    return res.status(500).json({
+      connected: false,
+      tickets: [],
+      message: "工单数据读取失败",
+      detail: error.message,
+    });
+  }
+});
+
+app.get("/api/tickets/:id/messages", async (req, res) => {
+  if (!supabaseAdmin) {
+    return res.status(503).json({
+      connected: false,
+      messages: [],
+      message: "数据库未连接，请配置 SUPABASE_SERVICE_ROLE_KEY",
+    });
+  }
+
+  try {
+    const { id } = req.params;
+    const { data, error } = await supabaseAdmin
+      .from("ticket_messages")
+      .select("*")
+      .eq("ticket_id", id)
+      .order("created_at", { ascending: true });
+
+    if (error) throw error;
+
+    return res.json({
+      connected: true,
+      messages: data || [],
+      total: (data || []).length,
+      lastUpdated: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("/api/tickets/:id/messages error:", error);
+    return res.status(500).json({
+      connected: false,
+      messages: [],
+      message: "工单聊天记录读取失败",
+      detail: error.message,
+    });
+  }
+});
 app.post("/api/upload-doc", upload.single('document'), async (req, res) => {
   try {
     if (!req.file) {
@@ -889,3 +959,6 @@ if (require.main === module) {
 }
 
 module.exports = app;
+
+
+

@@ -1380,35 +1380,39 @@
         }
 
         async function loadTickets() {
-            console.log("开始从 Supabase 读取 tickets");
-
-            if (!window.supabaseClient) {
-                console.error("Supabase 未初始化");
-                return;
-            }
+            console.log("开始从后端 API 读取 tickets");
 
             try {
-                const { data, error } = await window.supabaseClient
-                    .from('tickets')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (error) {
-                    console.error("tickets 读取失败：", error);
-                    throw error;
+                const response = await fetch('/api/tickets', { cache: 'no-store' });
+                const result = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    throw new Error(result.message || result.error || '工单数据读取失败');
                 }
 
-                console.log("Supabase tickets data:", data);
-                allTickets = data || [];
+                console.log("API tickets data:", result.tickets);
+                const previousSelectedId = selectedTicketId;
+                allTickets = result.tickets || [];
                 renderTicketCards(allTickets);
                 updateStats();
-                
-                if (allTickets.length > 0) {
-                    selectTicket(allTickets[0].id);
+
+                const filtered = getFilteredTickets(allTickets);
+                const nextSelected = previousSelectedId && filtered.some(t => t.id === previousSelectedId)
+                    ? previousSelectedId
+                    : filtered[0]?.id;
+
+                if (nextSelected) {
+                    selectTicket(nextSelected);
+                } else {
+                    selectedTicket = null;
+                    selectedTicketId = null;
+                    renderWorkbenchContent(null);
+                    renderHandlerPanel(null);
                 }
             } catch (error) {
                 console.error("tickets 加载异常：", error);
-                document.getElementById('ticketCardList').innerHTML = '<div class="empty-state"><div class="empty-title">工单加载失败</div></div>';
+                document.getElementById('ticketCardList').innerHTML = `<div class="empty-state"><div class="empty-title">工单加载失败</div><div class="empty-desc">${error.message || '请检查后端服务和数据库配置'}</div></div>`;
+                allTickets = [];
+                updateStats();
             }
         }
 
@@ -1612,28 +1616,19 @@
 
         async function loadTicketMessages(ticketId) {
             console.log("加载工单消息：", ticketId);
-            
-            if (!window.supabaseClient) {
-                console.error("Supabase 未初始化");
-                return;
-            }
 
             try {
-                const { data, error } = await window.supabaseClient
-                    .from('ticket_messages')
-                    .select('*')
-                    .eq('ticket_id', ticketId)
-                    .order('created_at', { ascending: true });
-
-                if (error) {
-                    console.error("加载消息失败：", error);
-                    return;
+                const response = await fetch(`/api/tickets/${ticketId}/messages`, { cache: 'no-store' });
+                const result = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    throw new Error(result.message || result.error || '聊天记录读取失败');
                 }
 
-                console.log("ticket_messages 读取结果：", data);
-                renderChatMessages(data);
+                console.log("ticket_messages API 读取结果：", result.messages);
+                renderChatMessages(result.messages || []);
             } catch (err) {
                 console.error("加载消息异常：", err);
+                renderChatMessages([]);
             }
         }
 
@@ -2264,3 +2259,4 @@
 </body>
 
 </html>
+
