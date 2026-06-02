@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
@@ -1861,6 +1861,8 @@
         function assignCurrentTicket() {
             if (selectedTicketId) {
                 assignTicket(selectedTicketId);
+            } else {
+                showToast("请先选择一个工单", 'error');
             }
         }
 
