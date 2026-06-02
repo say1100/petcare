@@ -2,6 +2,14 @@
   "version": 2,
   "rewrites": [
     { "source": "/api/:path*", "destination": "/api/index.js" },
+    { "source": "/project-index.html", "destination": "/project-index.html" },
+    { "source": "/dashboard.html", "destination": "/dashboard.html" },
+    { "source": "/chat.html", "destination": "/chat.html" },
+    { "source": "/records.html", "destination": "/records.html" },
+    { "source": "/transfer.html", "destination": "/transfer.html" },
+    { "source": "/knowledge.html", "destination": "/knowledge.html" },
+    { "source": "/feedback.html", "destination": "/feedback.html" },
+    { "source": "/test-supabase.html", "destination": "/test-supabase.html" },
     { "source": "/", "destination": "/project-index.html" }
   ],
   "headers": [
