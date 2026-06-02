@@ -3,5 +3,15 @@
   "rewrites": [
     { "source": "/api/:path*", "destination": "/api/index.js" },
     { "source": "/", "destination": "/project-index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/css/:path*",
+      "headers": [{ "key": "Content-Type", "value": "text/css; charset=utf-8" }]
+    },
+    {
+      "source": "/js/:path*",
+      "headers": [{ "key": "Content-Type", "value": "application/javascript; charset=utf-8" }]
+    }
   ]
 }

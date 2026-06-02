@@ -1,0 +1,1234 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识库管理 - PetCare AI</title>
+    <link rel="stylesheet" href="/css/design-tokens.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/legacy-fallback.css">
+    <style>
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+            background: var(--bg-page);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-header {
+            background: var(--bg-card);
+            padding: var(--space-5) var(--space-6);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-header-left h1 {
+            font-size: var(--font-xl);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 4px 0;
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .page-header-left .subtitle {
+            font-size: var(--font-sm);
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .page-container {
+            flex: 1;
+            padding: var(--space-6);
+        }
+
+        .page-actions {
+            display: flex;
+            gap: var(--space-3);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-md);
+            font-size: var(--font-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-default);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .content-area {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: var(--space-5);
+            align-items: start;
+        }
+
+        .filter-panel {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+            position: sticky;
+            top: var(--space-6);
+        }
+
+        .filter-panel-header {
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .filter-panel-title {
+            font-size: var(--font-sm);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .filter-list {
+            list-style: none;
+            padding: var(--space-2) 0;
+        }
+
+        .filter-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-3) var(--space-4);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border-left: 2px solid transparent;
+        }
+
+        .filter-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .filter-item.active {
+            background: var(--primary-bg);
+            border-left-color: var(--primary);
+        }
+
+        .filter-item-name {
+            font-size: var(--font-sm);
+            color: var(--text-secondary);
+        }
+
+        .filter-item.active .filter-item-name {
+            color: var(--primary-dark);
+            font-weight: 500;
+        }
+
+        .filter-count {
+            font-size: var(--font-xs);
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            background: var(--gray-100);
+            color: var(--text-muted);
+        }
+
+        .filter-item.active .filter-count {
+            background: var(--primary-bg);
+            color: var(--primary-dark);
+        }
+
+        .main-panel {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: var(--space-4) var(--space-5);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--gray-50);
+        }
+
+        .panel-title {
+            font-size: var(--font-md);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .search-box {
+            display: flex;
+            gap: var(--space-2);
+        }
+
+        .search-input {
+            padding: var(--space-2) var(--space-3);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-md);
+            font-size: var(--font-sm);
+            width: 200px;
+            outline: none;
+            transition: border-color var(--transition-fast);
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+        }
+
+        .doc-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .doc-table th {
+            background: var(--gray-50);
+            padding: var(--space-3) var(--space-4);
+            text-align: left;
+            font-size: var(--font-sm);
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-default);
+            white-space: nowrap;
+        }
+
+        .doc-table td {
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--border-light);
+            font-size: var(--font-sm);
+            color: var(--text-secondary);
+            vertical-align: middle;
+        }
+
+        .doc-table tbody tr:hover {
+            background: var(--bg-hover);
+        }
+
+        .doc-title-cell {
+            font-weight: 500;
+            color: var(--text-primary);
+            max-width: 300px;
+        }
+
+        .doc-title-text {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .doc-tags-cell {
+            display: flex;
+            gap: var(--space-1);
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            font-size: var(--font-xs);
+            font-weight: 500;
+        }
+
+        .tag-product {
+            background: var(--primary-bg);
+            color: var(--primary-dark);
+        }
+
+        .tag-after_sales {
+            background: var(--success-bg);
+            color: var(--success-dark);
+        }
+
+        .tag-faq {
+            background: var(--warning-bg);
+            color: var(--warning-dark);
+        }
+
+        .tag-logistics {
+            background: #DBEAFE;
+            color: #2563EB;
+        }
+
+        .tag-transfer {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+
+        .tag-guidelines {
+            background: #F3E8FF;
+            color: #9333EA;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            background: var(--bg-secondary);
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: var(--primary-bg);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--primary);
+            background: var(--primary-bg);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .upload-text {
+            font-size: var(--font-md);
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .upload-hint {
+            font-size: var(--font-sm);
+            color: var(--text-muted);
+        }
+
+        .doc-actions-cell {
+            display: flex;
+            gap: var(--space-2);
+        }
+
+        .btn-icon {
+            padding: var(--space-2);
+            border-radius: var(--radius-md);
+            font-size: var(--font-sm);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: none;
+            background: transparent;
+        }
+
+        .btn-icon.edit {
+            color: var(--primary);
+            background: var(--primary-bg);
+        }
+
+        .btn-icon.edit:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-icon.delete {
+            color: var(--danger);
+            background: var(--danger-bg);
+        }
+
+        .btn-icon.delete:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: var(--z-modal);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.2s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            padding: var(--space-5);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: var(--font-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: var(--space-5);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-5);
+        }
+
+        .form-label {
+            display: block;
+            font-size: var(--font-sm);
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: var(--space-2);
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: var(--space-3);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-md);
+            font-size: var(--font-sm);
+            transition: border-color var(--transition-fast);
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .modal-footer {
+            padding: var(--space-4) var(--space-5);
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: var(--space-4);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/project-index.html" class="sidebar-logo">
+                    <div class="sidebar-logo-icon">🐾</div>
+                    <span class="sidebar-logo-text">PetCare AI</span>
+                </a>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">运营概览</div>
+                    <a href="/project-index.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M3 9h18M9 21V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </span>
+                        <span>数据看板</span>
+                        <span class="nav-item-badge success" hidden></span>
+                    </a>
+                    <a href="/dashboard.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 20V10M18 20V4M6 20v-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </span>
+                        <span>数据分析</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">客服运营</div>
+                    <a href="/chat.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </span>
+                        <span>智能客服</span>
+                    </a>
+                    <a href="/records.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </span>
+                        <span>问答记录</span>
+                    </a>
+                    <a href="/transfer.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8.5" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+                        </span>
+                        <span>转接中心</span>
+                        <span class="nav-item-badge" hidden></span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">知识管理</div>
+                    <a href="/knowledge.html" class="nav-item active">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </span>
+                        <span>知识库</span>
+                    </a>
+                    <a href="/feedback.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </span>
+                        <span>反馈分析</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">K</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name">管理员</div>
+                        <div class="sidebar-user-role">运营人员</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <div class="page-header-left">
+                    <h1>📚 知识库管理</h1>
+                    <p class="subtitle">RAG 知识资产管理与命中表现监测</p>
+                </div>
+                <div class="page-actions">
+                        <button class="btn btn-primary" onclick="openAddModal()">
+                            <span>➕</span> 新增文档
+                        </button>
+                        <button class="btn btn-secondary" onclick="syncDifyKB()">
+                            <span>🔄</span> 同步 Dify 知识库
+                        </button>
+                    </div>
+            </div>
+
+            <div class="page-container">
+                <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">📄</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalDocs">8</div>
+                            <div class="stat-label">文档总数</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">✅</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="parsedDocs">8</div>
+                            <div class="stat-label">已解析</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">📡</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalHits">156</div>
+                            <div class="stat-label">总命中次数</div>
+                        </div>
+                    </div>
+                    <div class="stat-card" id="updatePendingCard" style="cursor: pointer;" onclick="showPendingDocs()">
+                        <div class="stat-icon purple">🔄</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="updatePending">1</div>
+                            <div class="stat-label">待更新</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-area">
+                    <div class="filter-panel">
+                        <div class="filter-panel-header">
+                            <span class="filter-panel-title">文档分类</span>
+                        </div>
+                        <ul class="filter-list">
+                            <li class="filter-item active" onclick="filterByCategory('all')">
+                                <span class="filter-item-name">全部文档</span>
+                                <span class="filter-count" id="count-all">8</span>
+                            </li>
+                            <li class="filter-item" onclick="filterByCategory('product')">
+                                <span class="filter-item-name">商品说明</span>
+                                <span class="filter-count" id="count-product">2</span>
+                            </li>
+                            <li class="filter-item" onclick="filterByCategory('after_sales')">
+                                <span class="filter-item-name">售后政策</span>
+                                <span class="filter-count" id="count-after_sales">2</span>
+                            </li>
+                            <li class="filter-item" onclick="filterByCategory('faq')">
+                                <span class="filter-item-name">常见问题</span>
+                                <span class="filter-count" id="count-faq">1</span>
+                            </li>
+                            <li class="filter-item" onclick="filterByCategory('logistics')">
+                                <span class="filter-item-name">物流规则</span>
+                                <span class="filter-count" id="count-logistics">1</span>
+                            </li>
+                            <li class="filter-item" onclick="filterByCategory('transfer')">
+                                <span class="filter-item-name">转接规则</span>
+                                <span class="filter-count" id="count-transfer">1</span>
+                            </li>
+                            <li class="filter-item" onclick="filterByCategory('guidelines')">
+                                <span class="filter-item-name">话术规范</span>
+                                <span class="filter-count" id="count-guidelines">1</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="main-panel">
+                        <div class="panel-header">
+                            <span class="panel-title" id="currentCategoryTitle">全部文档</span>
+                            <div class="search-box">
+                                <input type="text" class="search-input" placeholder="搜索文档标题、内容或标签..." id="searchInput" oninput="searchDocs()">
+                            </div>
+                        </div>
+                        <table class="doc-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 35%;">文档标题</th>
+                                    <th style="width: 12%;">分类</th>
+                                    <th style="width: 28%;">标签</th>
+                                    <th style="width: 10%;">浏览</th>
+                                    <th style="width: 15%;">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="docList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal" id="pendingModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title">待更新文档</span>
+                <button class="modal-close" onclick="closePendingModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="pendingDocsList">
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <p>暂无待更新文档</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closePendingModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="docModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title" id="modalTitle">新增文档</span>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">文档标题 *</label>
+                    <input type="text" class="form-input" id="docTitle" placeholder="请输入文档标题">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">文档分类 *</label>
+                    <select class="form-select" id="docCategory">
+                        <option value="product">商品说明</option>
+                        <option value="after_sales">售后政策</option>
+                        <option value="faq">常见问题</option>
+                        <option value="logistics">物流规则</option>
+                        <option value="transfer">人工转接规则</option>
+                        <option value="guidelines">话术规范</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">上传文档文件（支持 PDF、Word、TXT）</label>
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">📁</div>
+                        <div class="upload-text">点击或拖拽上传文件</div>
+                        <div class="upload-hint">支持 .pdf, .docx, .doc, .txt 格式</div>
+                        <input type="file" id="docFile" accept=".pdf,.docx,.doc,.txt" style="display: none;">
+                    </div>
+                    <div id="uploadFileName" style="margin-top: 10px; font-size: 12px; color: var(--text-muted);"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">文档内容 *</label>
+                    <textarea class="form-textarea" id="docContent" placeholder="请输入文档内容..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">标签（用逗号分隔）</label>
+                    <input type="text" class="form-input" id="docTags" placeholder="如：猫粮, 成猫, 蛋白质">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveDoc()">保存</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./js/supabaseClient.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/knowledge.js"></script>
+    <script>
+        let currentCategory = 'all';
+        let currentEditId = null;
+        let knowledgeDocs = [];
+        
+        const categoryNames = {
+            'product': '商品说明',
+            'after_sales': '售后政策',
+            'faq': '常见问题',
+            'logistics': '物流规则',
+            'transfer': '人工转接规则',
+            'guidelines': '话术规范'
+        };
+        
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+        }
+        
+        async function loadKnowledgeDocs() {
+            try {
+                const { data, error } = await supabase
+                    .from('knowledge_docs')
+                    .select('doc_name, doc_type, status, hit_count, updated_at, merchant_id, id');
+                
+                if (error) {
+                    throw error;
+                }
+                
+                knowledgeDocs = data || [];
+                
+                if (knowledgeDocs.length === 0) {
+                    knowledgeDocs = getMockKnowledgeDocs();
+                }
+                
+                renderKnowledgeDocs(knowledgeDocs);
+                updateKnowledgeStats(knowledgeDocs);
+            } catch (error) {
+                console.error('Supabase 数据加载失败:', error);
+                knowledgeDocs = getMockKnowledgeDocs();
+                renderKnowledgeDocs(knowledgeDocs);
+                updateKnowledgeStats(knowledgeDocs);
+            }
+        }
+        
+        function getMockKnowledgeDocs() {
+            const now = new Date().toISOString();
+            return [
+                { id: 'sample', doc_name: '示例文档', doc_type: 'product', status: '已解析', hit_count: 0, updated_at: now, merchant_id: '1' },
+            ];
+        }
+        
+        function renderKnowledgeDocs(docs) {
+            const list = document.getElementById('docList');
+            if (docs.length === 0) {
+                list.innerHTML = `
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <div class="empty-icon">📭</div>
+                                <p>暂无文档</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            list.innerHTML = docs.map(doc => `
+                <tr>
+                    <td class="doc-title-cell">
+                        <span class="doc-title-text">${doc.doc_name || '未命名文档'}</span>
+                    </td>
+                    <td>
+                        <span class="tag tag-${doc.doc_type}">${categoryNames[doc.doc_type] || doc.doc_type}</span>
+                    </td>
+                    <td>
+                        <span class="tag tag-${doc.status === '已解析' ? 'success' : 'warning'}">${doc.status || '-'}</span>
+                    </td>
+                    <td>${doc.hit_count || 0}</td>
+                    <td>
+                        <div class="doc-actions-cell">
+                            <button class="btn-icon edit" onclick="editDoc('${doc.id}')" title="编辑">✏️</button>
+                            <button class="btn-icon delete" onclick="deleteDoc('${doc.id}')" title="删除">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function updateKnowledgeStats(docs) {
+            const totalDocs = docs.length;
+            const parsedDocs = docs.filter(d => d.status === '已解析').length;
+            const totalHits = docs.reduce((sum, d) => sum + (d.hit_count || 0), 0);
+            const updatePending = docs.filter(d => d.status === '待更新' || d.status === '需优化').length;
+            
+            document.getElementById('totalDocs').textContent = totalDocs;
+            document.getElementById('parsedDocs').textContent = parsedDocs;
+            document.getElementById('totalHits').textContent = totalHits;
+            document.getElementById('updatePending').textContent = updatePending;
+            
+            const counts = {
+                'all': totalDocs,
+                'product': docs.filter(d => d.doc_type === 'product').length,
+                'after_sales': docs.filter(d => d.doc_type === 'after_sales').length,
+                'faq': docs.filter(d => d.doc_type === 'faq').length,
+                'logistics': docs.filter(d => d.doc_type === 'logistics').length,
+                'transfer': docs.filter(d => d.doc_type === 'transfer').length,
+                'guidelines': docs.filter(d => d.doc_type === 'guidelines').length
+            };
+            
+            for (const [cat, count] of Object.entries(counts)) {
+                const el = document.getElementById(`count-${cat}`);
+                if (el) el.textContent = count;
+            }
+        }
+        
+        function filterByCategory(category) {
+            currentCategory = category;
+            document.querySelectorAll('.filter-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            document.getElementById('currentCategoryTitle').textContent = 
+                category === 'all' ? '全部文档' : categoryNames[category] + '文档';
+            
+            let docs = [...knowledgeDocs];
+            if (category !== 'all') {
+                docs = docs.filter(d => d.doc_type === category);
+            }
+            renderKnowledgeDocs(docs);
+        }
+        
+        function searchDocs() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
+            let docs = [...knowledgeDocs];
+            
+            if (currentCategory !== 'all') {
+                docs = docs.filter(d => d.doc_type === currentCategory);
+            }
+            
+            if (keyword) {
+                docs = docs.filter(d => 
+                    (d.doc_name || '').toLowerCase().includes(keyword)
+                );
+            }
+            
+            renderKnowledgeDocs(docs);
+        }
+        
+        function openAddModal() {
+            currentEditId = null;
+            document.getElementById('modalTitle').textContent = '新增文档';
+            document.getElementById('docTitle').value = '';
+            document.getElementById('docCategory').value = 'product';
+            document.getElementById('docContent').value = '';
+            document.getElementById('docTags').value = '';
+            document.getElementById('docFile').value = '';
+            document.getElementById('uploadFileName').textContent = '';
+            document.getElementById('docModal').classList.add('active');
+        }
+        
+        function editDoc(id) {
+            currentEditId = id;
+            const doc = knowledgeDocs.find(d => d.id === id);
+            if (!doc) return;
+            
+            document.getElementById('modalTitle').textContent = '编辑文档';
+            document.getElementById('docTitle').value = doc.doc_name || '';
+            document.getElementById('docCategory').value = doc.doc_type || 'product';
+            document.getElementById('docContent').value = '';
+            document.getElementById('docTags').value = '';
+            document.getElementById('docFile').value = '';
+            document.getElementById('uploadFileName').textContent = '';
+            document.getElementById('docModal').classList.add('active');
+        }
+        
+        function saveDoc() {
+            const title = document.getElementById('docTitle').value.trim();
+            const category = document.getElementById('docCategory').value;
+            const content = document.getElementById('docContent').value.trim();
+            const tagsStr = document.getElementById('docTags').value.trim();
+            const fileInput = document.getElementById('docFile');
+            const file = fileInput.files ? fileInput.files[0] : null;
+            
+            if (!title) {
+                alert('请填写文档标题');
+                return;
+            }
+            
+            if (!content && !file) {
+                alert('请上传文档文件或填写文档内容');
+                return;
+            }
+            
+            if (file) {
+                processUploadedFile(file, title, category, tagsStr);
+            } else {
+                saveDocToDB({ title, category, content, tags: tagsStr.split(',').map(t => t.trim()).filter(Boolean) });
+            }
+        }
+        
+        async function processUploadedFile(file, title, category, tagsStr) {
+            try {
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    let content = '';
+                    const fileExtension = file.name.split('.').pop().toLowerCase();
+                    
+                    if (fileExtension === 'txt') {
+                        content = e.target.result;
+                    } else if (fileExtension === 'pdf' || fileExtension === 'docx' || fileExtension === 'doc') {
+                        content = `[文件上传] ${file.name}\n\n文档内容待解析...`;
+                    }
+                    
+                    await saveDocToDB({ 
+                        title, 
+                        category, 
+                        content, 
+                        tags: tagsStr.split(',').map(t => t.trim()).filter(Boolean),
+                        fileName: file.name 
+                    });
+                };
+                
+                if (file.type === 'text/plain') {
+                    reader.readAsText(file);
+                } else {
+                    reader.readAsArrayBuffer(file);
+                }
+            } catch (error) {
+                console.error('文件处理失败:', error);
+                alert('文件处理失败，请重试');
+            }
+        }
+        
+        async function saveDocToDB(docData) {
+            try {
+                const fileInput = document.getElementById('docFile');
+                const file = fileInput.files ? fileInput.files[0] : null;
+                
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('document', file);
+                    formData.append('title', docData.title);
+                    formData.append('category', docData.category);
+                    if (docData.tags && docData.tags.length > 0) {
+                        formData.append('tags', docData.tags.join(','));
+                    }
+                    
+                    const response = await fetch('/api/upload-doc', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    if (result.success) {
+                        console.log('文件上传成功:', result.data);
+                        showToast('文档上传成功');
+                    } else {
+                        throw new Error(result.error || '上传失败');
+                    }
+                } else {
+                    console.log('保存文档内容:', docData);
+                    showToast('文档保存成功');
+                }
+                
+                closeModal();
+                loadKnowledgeDocs();
+            } catch (error) {
+                console.error('文档保存失败:', error);
+                alert('文档保存失败: ' + error.message);
+            }
+        }
+        
+        function deleteDoc(id) {
+            if (confirm('确定要删除这篇文档吗？')) {
+                loadKnowledgeDocs();
+            }
+        }
+        
+        function closeModal() {
+            document.getElementById('docModal').classList.remove('active');
+            document.getElementById('docFile').value = '';
+            document.getElementById('uploadFileName').textContent = '';
+        }
+
+        async function syncDifyKB() {
+            try {
+                const response = await fetch('/api/sync-dify-kb', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(`成功同步 ${result.total} 个文档到 Dify 知识库`);
+                    loadKnowledgeDocs();
+                } else {
+                    alert('同步失败: ' + (result.error || result.detail || '未知错误'));
+                }
+            } catch (error) {
+                alert('同步失败: ' + error.message);
+            }
+        }
+
+        async function saveDocToDB(docData) {
+            try {
+                const fileInput = document.getElementById('docFile');
+                const file = fileInput.files ? fileInput.files[0] : null;
+                
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('document', file);
+                    formData.append('title', docData.title);
+                    formData.append('category', docData.category);
+                    if (docData.tags && docData.tags.length > 0) {
+                        formData.append('tags', docData.tags.join(','));
+                    }
+                    
+                    const response = await fetch('/api/upload-doc', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    if (result.success) {
+                        console.log('文件上传到服务器成功:', result.data);
+                        
+                        const difyResponse = await fetch('/api/dify-kb-upload', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                document_name: docData.title,
+                                content: docData.content || `[文件上传] ${file.name}\n\n文档内容待解析...`
+                            })
+                        });
+                        
+                        const difyResult = await difyResponse.json();
+                        if (difyResult.success) {
+                            console.log('文档同步到 Dify 成功:', difyResult.data);
+                            showToast('文档上传成功，已同步到 Dify 知识库');
+                        } else {
+                            console.warn('同步到 Dify 失败:', difyResult.error);
+                            showToast('文档上传成功，但同步到 Dify 失败');
+                        }
+                    } else {
+                        throw new Error(result.error || '上传失败');
+                    }
+                } else {
+                    const difyResponse = await fetch('/api/dify-kb-upload', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            document_name: docData.title,
+                            content: docData.content
+                        })
+                    });
+                    
+                    const difyResult = await difyResponse.json();
+                    if (difyResult.success) {
+                        console.log('文档上传到 Dify 成功:', difyResult.data);
+                        showToast('文档上传成功，已同步到 Dify 知识库');
+                    } else {
+                        throw new Error(difyResult.error || '上传失败');
+                    }
+                }
+                
+                closeModal();
+                loadKnowledgeDocs();
+            } catch (error) {
+                console.error('文档保存失败:', error);
+                alert('文档保存失败: ' + error.message);
+            }
+        }
+
+        function setupFileUpload() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('docFile');
+            const fileNameDisplay = document.getElementById('uploadFileName');
+            
+            uploadArea.addEventListener('click', () => {
+                fileInput.click();
+            });
+            
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    fileNameDisplay.textContent = `已选择: ${file.name}`;
+                    
+                    if (file.type === 'text/plain') {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            document.getElementById('docContent').value = event.target.result;
+                        };
+                        reader.readAsText(file);
+                    }
+                }
+            });
+            
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                
+                const file = e.dataTransfer.files[0];
+                if (file) {
+                    fileInput.files = e.dataTransfer.files;
+                    fileNameDisplay.textContent = `已选择: ${file.name}`;
+                    
+                    if (file.type === 'text/plain') {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            document.getElementById('docContent').value = event.target.result;
+                        };
+                        reader.readAsText(file);
+                    }
+                }
+            });
+        }
+
+        function showPendingDocs() {
+            const pendingDocs = knowledgeDocs.filter(d => d.status === '待更新' || d.status === '需优化');
+            const list = document.getElementById('pendingDocsList');
+            
+            if (pendingDocs.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <p>暂无待更新文档</p>
+                    </div>
+                `;
+            } else {
+                list.innerHTML = `
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        ${pendingDocs.map(doc => `
+                            <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-light);">
+                                <div style="font-weight: 500; color: var(--text-primary); margin-bottom: 4px;">${doc.doc_name || '未命名文档'}</div>
+                                <div style="font-size: 12px; color: var(--text-muted);">
+                                    分类: ${categoryNames[doc.doc_type] || doc.doc_type} | 
+                                    更新时间: ${formatDate(doc.updated_at)}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            document.getElementById('pendingModal').classList.add('active');
+        }
+
+        function closePendingModal() {
+            document.getElementById('pendingModal').classList.remove('active');
+        }
+
+        function subscribeKnowledgeDocsRealtime() {
+            supabaseClient
+                .channel("knowledge-docs-channel")
+                .on(
+                    "postgres_changes",
+                    { event: "*", schema: "public", table: "knowledge_docs" },
+                    () => loadKnowledgeDocs()
+                )
+                .subscribe();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadKnowledgeDocs();
+            subscribeKnowledgeDocsRealtime();
+            setupFileUpload();
+        });
+    </script>
+</body>
+</html>

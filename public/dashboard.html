@@ -1,0 +1,756 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据看板 - PetCare AI</title>
+    <link rel="stylesheet" href="/css/design-tokens.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/legacy-fallback.css">
+    <style>
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+            background: var(--bg-page);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-header {
+            background: var(--bg-card);
+            padding: var(--space-5) var(--space-6);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-header-left h1 {
+            font-size: var(--font-xl);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 4px 0;
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .page-header-left .subtitle {
+            font-size: var(--font-sm);
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .page-header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .date-range {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-3);
+            background: var(--bg-section);
+            border-radius: var(--radius-md);
+            font-size: var(--font-sm);
+            color: var(--text-secondary);
+        }
+
+        .page-container {
+            flex: 1;
+            padding: var(--space-6);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: var(--space-4);
+            margin-bottom: var(--space-5);
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            padding: var(--space-5);
+            box-shadow: var(--shadow-xs);
+            transition: box-shadow var(--transition-fast);
+        }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-3);
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .stat-icon.blue { background: var(--primary-bg); }
+        .stat-icon.green { background: var(--success-bg); }
+        .stat-icon.orange { background: var(--warning-bg); }
+        .stat-icon.red { background: var(--danger-bg); }
+        .stat-icon.purple { background: var(--info-bg); }
+
+        .stat-trend {
+            font-size: var(--font-xs);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .stat-trend.up { color: var(--success); }
+        .stat-trend.down { color: var(--danger); }
+
+        .stat-value {
+            font-size: var(--font-3xl);
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: var(--font-sm);
+            color: var(--text-muted);
+            margin-top: var(--space-1);
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-5);
+            margin-bottom: var(--space-5);
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-xs);
+        }
+
+        .card-header {
+            padding: var(--space-4) var(--space-5);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: var(--font-md);
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .card-body {
+            padding: var(--space-5);
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 220px;
+            padding: 0 var(--space-4);
+        }
+
+        .bar-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-2);
+            flex: 1;
+        }
+
+        .bar-value {
+            font-size: var(--font-sm);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .bar {
+            width: 100%;
+            max-width: 50px;
+            background: linear-gradient(180deg, var(--primary), var(--primary-dark));
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            transition: height 0.3s ease;
+        }
+
+        .bar-label {
+            font-size: var(--font-xs);
+            color: var(--text-muted);
+            margin-top: var(--space-2);
+        }
+
+        .pie-chart-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 220px;
+            gap: var(--space-6);
+        }
+
+        .pie-chart {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: conic-gradient(
+                var(--success) 0deg 162deg,
+                var(--primary) 162deg 270deg,
+                var(--warning) 270deg 324deg,
+                var(--danger) 324deg 360deg
+            );
+            position: relative;
+        }
+
+        .pie-chart::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: var(--bg-card);
+            border-radius: 50%;
+        }
+
+        .pie-legend {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            font-size: var(--font-sm);
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        .legend-color.green { background: var(--success); }
+        .legend-color.blue { background: var(--primary); }
+        .legend-color.orange { background: var(--warning); }
+        .legend-color.red { background: var(--danger); }
+
+        .legend-label {
+            color: var(--text-secondary);
+        }
+
+        .legend-value {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-left: auto;
+        }
+
+        .bottom-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-5);
+            margin-bottom: var(--space-5);
+        }
+
+        .list-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .list-table th {
+            background: var(--gray-50);
+            padding: var(--space-3) var(--space-4);
+            text-align: left;
+            font-size: var(--font-sm);
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-default);
+            white-space: nowrap;
+        }
+
+        .list-table td {
+            padding: var(--space-3) var(--space-4);
+            border-bottom: 1px solid var(--border-light);
+            font-size: var(--font-sm);
+            color: var(--text-secondary);
+            vertical-align: middle;
+        }
+
+        .list-table tbody tr:hover {
+            background: var(--bg-hover);
+        }
+
+        .rank-badge {
+            width: 24px;
+            height: 24px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-xs);
+            font-weight: 600;
+        }
+
+        .rank-badge.gold { background: #FEF3C7; color: #D97706; }
+        .rank-badge.silver { background: #F3F4F6; color: #6B7280; }
+        .rank-badge.bronze { background: #FEE2E2; color: var(--danger); }
+        .rank-badge.default { background: var(--gray-100); color: var(--text-muted); }
+
+        .question-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .question-meta {
+            font-size: var(--font-xs);
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .count-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            font-size: var(--font-xs);
+            font-weight: 500;
+        }
+
+        .tag-high {
+            background: var(--danger-bg);
+            color: var(--danger-dark);
+        }
+
+        .tag-medium {
+            background: var(--warning-bg);
+            color: var(--warning-dark);
+        }
+
+        .tag-low {
+            background: var(--info-bg);
+            color: var(--info);
+        }
+
+        .progress-section {
+            margin-top: var(--space-5);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-3);
+        }
+
+        .progress-title {
+            font-size: var(--font-sm);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .progress-value {
+            font-size: var(--font-lg);
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--primary));
+            border-radius: var(--radius-full);
+        }
+
+        .progress-trend {
+            font-size: var(--font-xs);
+            color: var(--success);
+            margin-top: var(--space-2);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/project-index.html" class="sidebar-logo">
+                    <div class="sidebar-logo-icon">🐾</div>
+                    <span class="sidebar-logo-text">PetCare AI</span>
+                </a>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">运营概览</div>
+                    <a href="/project-index.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M3 9h18M9 21V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </span>
+                        <span>数据看板</span>
+                        <span class="nav-item-badge success" hidden></span>
+                    </a>
+                    <a href="/dashboard.html" class="nav-item active">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 20V10M18 20V4M6 20v-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </span>
+                        <span>数据分析</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">客服运营</div>
+                    <a href="/chat.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </span>
+                        <span>智能客服</span>
+                    </a>
+                    <a href="/records.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </span>
+                        <span>问答记录</span>
+                    </a>
+                    <a href="/transfer.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8.5" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+                        </span>
+                        <span>转接中心</span>
+                        <span class="nav-item-badge" hidden></span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">知识管理</div>
+                    <a href="/knowledge.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </span>
+                        <span>知识库</span>
+                    </a>
+                    <a href="/feedback.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </span>
+                        <span>反馈分析</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">K</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name">管理员</div>
+                        <div class="sidebar-user-role">运营人员</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <div class="page-header-left">
+                    <h1>📊 数据看板</h1>
+                    <p class="subtitle">客服运营指标与问题分布分析</p>
+                </div>
+                <div class="page-header-right">
+                    <div class="date-range">
+                        <span>📅</span>
+                        <span>近7日数据</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-container">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon blue">💬</div>
+                            <span class="stat-trend up">↑ 12%</span>
+                        </div>
+                        <div class="stat-value" id="statConsult">89</div>
+                        <div class="stat-label">今日咨询量</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon green">✅</div>
+                            <span class="stat-trend up">↑ 5%</span>
+                        </div>
+                        <div class="stat-value" id="statResolveRate">87.6%</div>
+                        <div class="stat-label">AI 自动解决率</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon orange">👤</div>
+                            <span class="stat-trend down">↓ 8%</span>
+                        </div>
+                        <div class="stat-value" id="statTransfer">5</div>
+                        <div class="stat-label">转人工数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon purple">⭐</div>
+                            <span class="stat-trend up">↑ 3%</span>
+                        </div>
+                        <div class="stat-value" id="statPending">3</div>
+                        <div class="stat-label">待处理工单</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon red">⚠️</div>
+                            <span class="stat-trend down">↓ 15%</span>
+                        </div>
+                        <div class="stat-value" id="statRisk">2</div>
+                        <div class="stat-label">高风险问题</div>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">📈 近7日咨询趋势</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="bar-chart" id="consultationChart">
+                                <div class="bar-item">
+                                    <span class="bar-value">45</span>
+                                    <div class="bar" style="height: 90px;"></div>
+                                    <span class="bar-label">周一</span>
+                                </div>
+                                <div class="bar-item">
+                                    <span class="bar-value">62</span>
+                                    <div class="bar" style="height: 124px;"></div>
+                                    <span class="bar-label">周二</span>
+                                </div>
+                                <div class="bar-item">
+                                    <span class="bar-value">58</span>
+                                    <div class="bar" style="height: 116px;"></div>
+                                    <span class="bar-label">周三</span>
+                                </div>
+                                <div class="bar-item">
+                                    <span class="bar-value">71</span>
+                                    <div class="bar" style="height: 142px;"></div>
+                                    <span class="bar-label">周四</span>
+                                </div>
+                                <div class="bar-item">
+                                    <span class="bar-value">85</span>
+                                    <div class="bar" style="height: 170px;"></div>
+                                    <span class="bar-label">周五</span>
+                                </div>
+                                <div class="bar-item">
+                                    <span class="bar-value">96</span>
+                                    <div class="bar" style="height: 192px;"></div>
+                                    <span class="bar-label">周六</span>
+                                </div>
+                                <div class="bar-item">
+                                    <span class="bar-value">89</span>
+                                    <div class="bar" style="height: 178px;"></div>
+                                    <span class="bar-label">周日</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">📊 问题类型分布</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="pie-chart-container">
+                                <div class="pie-chart" id="issuePieChart"></div>
+                                <div class="pie-legend" id="issueLegend">
+                                    <div class="legend-item">
+                                        <span class="legend-color green"></span>
+                                        <span class="legend-label">商品咨询</span>
+                                        <span class="legend-value">45%</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="legend-color blue"></span>
+                                        <span class="legend-label">物流查询</span>
+                                        <span class="legend-value">30%</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="legend-color orange"></span>
+                                        <span class="legend-label">售后问题</span>
+                                        <span class="legend-value">15%</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="legend-color red"></span>
+                                        <span class="legend-label">其他</span>
+                                        <span class="legend-value">10%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bottom-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">🏆 高频问题 TOP 5</span>
+                        </div>
+                        <table class="list-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%;">排名</th>
+                                    <th style="width: 55%;">问题</th>
+                                    <th style="width: 20%;">类型</th>
+                                    <th style="width: 15%;">咨询次数</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="rank-badge gold">1</span></td>
+                                    <td>
+                                        <div class="question-name">猫粮适合年龄咨询</div>
+                                        <div class="question-meta">"这款猫粮适合多大的猫？"</div>
+                                    </td>
+                                    <td><span class="tag tag-low">商品咨询</span></td>
+                                    <td><span class="count-value">128</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="rank-badge silver">2</span></td>
+                                    <td>
+                                        <div class="question-name">订单发货时间查询</div>
+                                        <div class="question-meta">"我的订单什么时候发货？"</div>
+                                    </td>
+                                    <td><span class="tag tag-low">物流查询</span></td>
+                                    <td><span class="count-value">96</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="rank-badge bronze">3</span></td>
+                                    <td>
+                                        <div class="question-name">退货退款流程</div>
+                                        <div class="question-meta">"怎么申请退货退款？"</div>
+                                    </td>
+                                    <td><span class="tag tag-medium">售后问题</span></td>
+                                    <td><span class="count-value">72</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="rank-badge default">4</span></td>
+                                    <td>
+                                        <div class="question-name">优惠券使用方法</div>
+                                        <div class="question-meta">"优惠券怎么使用？"</div>
+                                    </td>
+                                    <td><span class="tag tag-low">会员服务</span></td>
+                                    <td><span class="count-value">58</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="rank-badge default">5</span></td>
+                                    <td>
+                                        <div class="question-name">宠物喂养建议</div>
+                                        <div class="question-meta">"猫咪不吃东西怎么办？"</div>
+                                    </td>
+                                    <td><span class="tag tag-low">养宠知识</span></td>
+                                    <td><span class="count-value">45</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">⚠️ 高风险问题分析</span>
+                        </div>
+                        <table class="list-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%;">排名</th>
+                                    <th style="width: 55%;">风险类型</th>
+                                    <th style="width: 20%;">风险等级</th>
+                                    <th style="width: 15%;">发生次数</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="rank-badge gold">1</span></td>
+                                    <td>
+                                        <div class="question-name">宠物健康风险</div>
+                                        <div class="question-meta">呕吐、腹泻、不吃不喝</div>
+                                    </td>
+                                    <td><span class="tag tag-high">高风险</span></td>
+                                    <td><span class="count-value">12</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="rank-badge silver">2</span></td>
+                                    <td>
+                                        <div class="question-name">退款纠纷</div>
+                                        <div class="question-meta">退款未到账、退货被拒</div>
+                                    </td>
+                                    <td><span class="tag tag-high">高风险</span></td>
+                                    <td><span class="count-value">8</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="rank-badge bronze">3</span></td>
+                                    <td>
+                                        <div class="question-name">商品质量投诉</div>
+                                        <div class="question-meta">异物、过期、变质</div>
+                                    </td>
+                                    <td><span class="tag tag-medium">中风险</span></td>
+                                    <td><span class="count-value">5</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="progress-section" style="padding: 0 var(--space-5) var(--space-5);">
+                            <div class="progress-header">
+                                <span class="progress-title">📚 知识库命中率</span>
+                                <span class="progress-value">86%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 86%;"></div>
+                            </div>
+                            <div class="progress-trend">↑ 较上周提升 12%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="/js/app.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

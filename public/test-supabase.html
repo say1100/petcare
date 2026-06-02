@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase 连接测试</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 800px; margin: 0 auto; padding: 40px 20px; background: #f5f5f5; }
+        .container { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
+        h1 { margin: 0 0 20px 0; color: #1f2937; }
+        .log { background: #1f2937; color: #e5e7eb; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 12px; min-height: 400px; white-space: pre-wrap; overflow-wrap: break-word; }
+        button { background: #3b82f6; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 20px; }
+        button:hover { background: #2563eb; }
+        .status { margin-top: 15px; padding: 10px; border-radius: 8px; font-weight: 600; }
+        .status.success { background: #dcfce7; color: #166534; }
+        .status.error { background: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Supabase 连接测试</h1>
+        <div class="log" id="log"></div>
+        <button onclick="testConnection()">开始测试</button>
+        <div class="status" id="status"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const log = document.getElementById('log');
+        const status = document.getElementById('status');
+
+        function addLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString('zh-CN');
+            const colors = {
+                success: 'color: #10b981',
+                error: 'color: #ef4444',
+                warning: 'color: #f59e0b',
+                info: 'color: #3b82f6'
+            };
+            log.innerHTML += `<span style="${colors[type]}">[${timestamp}]</span> ${message}\n`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        async function testConnection() {
+            log.innerHTML = '';
+            status.className = 'status';
+            status.textContent = '';
+
+            addLog('=== 开始 Supabase 连接测试 ===', 'info');
+
+            // 1. 检查 SDK
+            addLog('\n1. 检查 Supabase SDK...', 'info');
+            if (window.supabase) {
+                addLog('✅ window.supabase 存在', 'success');
+                addLog(`   - SDK 版本: ${window.supabase?.VERSION || '未知'}`, 'info');
+            } else {
+                addLog('❌ window.supabase 不存在！', 'error');
+                status.className = 'status error';
+                status.textContent = '❌ SDK 加载失败';
+                return;
+            }
+
+            // 2. 配置信息
+            addLog('\n2. 配置信息', 'info');
+            const SUPABASE_URL = "https://ihrzsxxrvlogsahkmsgq.supabase.co";
+            const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlocnpzeHhydmxvZ3NhaGttc2dxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NjI3ODMsImV4cCI6MjA5NTMzODc4M30.oj2E2c5pKbARb2QJo571znep3jpVJlZrDGbbFOa0C8s";
+            
+            addLog(`   - URL: ${SUPABASE_URL}`, 'info');
+            addLog(`   - Key 长度: ${SUPABASE_ANON_KEY?.length || 0} 字符`, 'info');
+
+            // 3. 创建 client
+            addLog('\n3. 创建 Supabase Client...', 'info');
+            try {
+                const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                addLog('✅ Supabase Client 创建成功', 'success');
+
+                // 4. 测试连接
+                addLog('\n4. 测试数据库连接...', 'info');
+                try {
+                    addLog('   - 正在查询 qa_records 表...', 'info');
+                    const { data, error } = await client.from('qa_records').select('*').limit(5);
+
+                    if (error) {
+                        addLog('❌ 查询失败', 'error');
+                        addLog(`   - 错误代码: ${error.code}`, 'error');
+                        addLog(`   - 错误信息: ${error.message}`, 'error');
+                        addLog(`   - 错误详情: ${error.details || '无'}`, 'error');
+                        addLog(`   - 错误提示: ${error.hint || '无'}`, 'error');
+                        addLog('\n💡 可能的原因:', 'warning');
+                        if (error.code === '401') addLog('   - API Key 无效或已过期', 'warning');
+                        if (error.code === '403') addLog('   - RLS 策略未配置或权限不足', 'warning');
+                        if (error.code === 'PGRST116') addLog('   - 表不存在，请创建 qa_records 表', 'warning');
+                        status.className = 'status error';
+                        status.textContent = '❌ 连接失败，请检查错误信息';
+                    } else {
+                        addLog('✅ 连接成功！', 'success');
+                        addLog(`   - 查询到 ${data?.length || 0} 条记录`, 'success');
+                        if (data && data.length > 0) {
+                            addLog(`   - 第一条记录 ID: ${data[0].id}`, 'info');
+                        }
+                        status.className = 'status success';
+                        status.textContent = '✅ 连接成功！';
+                    }
+                } catch (queryError) {
+                    addLog('❌ 查询异常', 'error');
+                    addLog(`   - 异常类型: ${queryError.name}`, 'error');
+                    addLog(`   - 异常信息: ${queryError.message}`, 'error');
+                    status.className = 'status error';
+                    status.textContent = '❌ 查询异常';
+                }
+
+            } catch (createError) {
+                addLog('❌ 创建 Client 失败', 'error');
+                addLog(`   - 错误类型: ${createError.name}`, 'error');
+                addLog(`   - 错误信息: ${createError.message}`, 'error');
+                status.className = 'status error';
+                status.textContent = '❌ 创建 Client 失败';
+            }
+
+            addLog('\n=== 测试完成 ===', 'info');
+        }
+    </script>
+</body>
+</html>

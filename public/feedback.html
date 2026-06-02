@@ -1,0 +1,1024 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>反馈归因分析 - PetCare AI</title>
+    <link rel="stylesheet" href="/css/design-tokens.css">
+    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/legacy-fallback.css">
+    <style>
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+            background: var(--bg-page);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-header {
+            background: var(--bg-card);
+            padding: var(--space-6);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .page-header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0 0 8px 0;
+            line-height: 1.3;
+        }
+
+        .page-header .subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin: 0;
+            max-width: 700px;
+            line-height: 1.6;
+        }
+
+        .page-container {
+            flex: 1;
+            padding: var(--space-6);
+        }
+
+        /* ==================== 指标卡片 ==================== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            padding: var(--space-5);
+            box-shadow: var(--shadow-xs);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-3);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .stat-tag {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            background: var(--gray-100);
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        .stat-tag.success {
+            background: var(--success-bg);
+            color: var(--success-dark);
+        }
+
+        .stat-tag.warning {
+            background: var(--warning-bg);
+            color: var(--warning-dark);
+        }
+
+        .stat-tag.danger {
+            background: var(--danger-bg);
+            color: var(--danger-dark);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.2;
+            margin-bottom: var(--space-2);
+        }
+
+        .stat-value.blue { color: var(--primary); }
+        .stat-value.green { color: var(--success); }
+        .stat-value.orange { color: var(--warning); }
+        .stat-value.red { color: var(--danger); }
+
+        .stat-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ==================== 卡片布局 ==================== */
+        .card-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-5);
+            margin-bottom: var(--space-5);
+        }
+
+        .card-row-full {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-5);
+        }
+
+        .card-row-3col {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: var(--space-5);
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-xs);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: var(--space-4) var(--space-5);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .card-body {
+            padding: var(--space-5);
+        }
+
+        /* ==================== 评分分布表格 ==================== */
+        .rating-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .rating-table th {
+            background: var(--gray-50);
+            padding: var(--space-3) var(--space-4);
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .rating-table td {
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--border-light);
+            color: var(--text-secondary);
+            vertical-align: middle;
+        }
+
+        .rating-table tbody tr:hover {
+            background: var(--bg-hover);
+        }
+
+        .rating-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: var(--radius-md);
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .rating-badge.r5 { background: var(--success); }
+        .rating-badge.r4 { background: var(--primary); }
+        .rating-badge.r3 { background: var(--warning); }
+        .rating-badge.r2 { background: #F97316; }
+        .rating-badge.r1 { background: var(--danger); }
+
+        /* ==================== 情感分布 ==================== */
+        .sentiment-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-3) 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .sentiment-item:last-child {
+            border-bottom: none;
+        }
+
+        .sentiment-label {
+            width: 60px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .sentiment-bar-wrap {
+            flex: 1;
+            height: 8px;
+            background: var(--gray-100);
+            border-radius: var(--radius-full);
+            margin: 0 var(--space-4);
+            overflow: hidden;
+        }
+
+        .sentiment-bar-fill {
+            height: 100%;
+            border-radius: var(--radius-full);
+            transition: width 0.3s ease;
+        }
+
+        .sentiment-bar-fill.positive { background: var(--success); }
+        .sentiment-bar-fill.neutral { background: var(--gray-400); }
+        .sentiment-bar-fill.negative { background: var(--danger); }
+
+        .sentiment-stats {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            min-width: 80px;
+        }
+
+        .sentiment-count {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .sentiment-percent {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .sentiment-percent.positive { color: var(--success); }
+        .sentiment-percent.neutral { color: var(--gray-500); }
+        .sentiment-percent.negative { color: var(--danger); }
+
+        /* ==================== 问题归因分布 ==================== */
+        .attribution-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .attribution-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-3) 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .attribution-item:last-child {
+            border-bottom: none;
+        }
+
+        .attribution-label {
+            width: 140px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .attribution-bar-wrap {
+            flex: 1;
+            height: 12px;
+            background: var(--gray-100);
+            border-radius: var(--radius-full);
+            margin: 0 var(--space-4);
+            overflow: hidden;
+        }
+
+        .attribution-bar-fill {
+            height: 100%;
+            border-radius: var(--radius-full);
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        }
+
+        .attribution-percent {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            min-width: 45px;
+            text-align: right;
+        }
+
+        /* ==================== 反馈详情表格 ==================== */
+        .feedback-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .feedback-table th {
+            background: var(--gray-50);
+            padding: var(--space-3) var(--space-4);
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .feedback-table td {
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--border-light);
+            color: var(--text-secondary);
+            vertical-align: middle;
+        }
+
+        .feedback-table tbody tr:hover {
+            background: var(--bg-hover);
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .tag-positive {
+            background: var(--success-bg);
+            color: var(--success-dark);
+        }
+
+        .tag-neutral {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        .tag-negative {
+            background: var(--danger-bg);
+            color: var(--danger-dark);
+        }
+
+        .priority-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .priority-tag.high {
+            background: var(--danger-bg);
+            color: var(--danger-dark);
+        }
+
+        .priority-tag.medium {
+            background: var(--warning-bg);
+            color: var(--warning-dark);
+        }
+
+        .priority-tag.low {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        .status-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-tag.pending {
+            background: var(--warning-bg);
+            color: var(--warning-dark);
+        }
+
+        .status-tag.processing {
+            background: var(--primary-bg);
+            color: var(--primary-dark);
+        }
+
+        .status-tag.completed {
+            background: var(--success-bg);
+            color: var(--success-dark);
+        }
+
+        /* ==================== 优化建议 ==================== */
+        .improvement-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .improvement-item {
+            padding: var(--space-4);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-light);
+            margin-bottom: var(--space-4);
+            background: var(--bg-section);
+        }
+
+        .improvement-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .improvement-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-3);
+        }
+
+        .improvement-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .improvement-meta {
+            display: flex;
+            gap: var(--space-3);
+        }
+
+        .improvement-meta-item {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .improvement-meta-item span {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .improvement-section {
+            margin-bottom: var(--space-3);
+        }
+
+        .improvement-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .improvement-section-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 4px;
+        }
+
+        .improvement-section-content {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="/project-index.html" class="sidebar-logo">
+                    <div class="sidebar-logo-icon">🐾</div>
+                    <span class="sidebar-logo-text">PetCare AI</span>
+                </a>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">运营概览</div>
+                    <a href="/project-index.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M3 9h18M9 21V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </span>
+                        <span>数据看板</span>
+                    </a>
+                    <a href="/dashboard.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 20V10M18 20V4M6 20v-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </span>
+                        <span>数据分析</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">客服运营</div>
+                    <a href="/chat.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </span>
+                        <span>智能客服</span>
+                    </a>
+                    <a href="/records.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </span>
+                        <span>问答记录</span>
+                    </a>
+                    <a href="/transfer.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8.5" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+                        </span>
+                        <span>转接中心</span>
+                        <span class="nav-item-badge" hidden></span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">知识管理</div>
+                    <a href="/knowledge.html" class="nav-item">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </span>
+                        <span>知识库</span>
+                    </a>
+                    <a href="/feedback.html" class="nav-item active">
+                        <span class="nav-item-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </span>
+                        <span>反馈分析</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">K</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name">管理员</div>
+                        <div class="sidebar-user-role">运营人员</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>反馈归因分析</h1>
+                <p class="subtitle">基于用户评分、负反馈与转人工记录，定位 AI 客服回答问题并生成知识库优化建议。</p>
+            </div>
+
+            <div class="page-container">
+                <!-- 指标卡片 -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-label">反馈总量</span>
+                            <span class="stat-tag">近7日</span>
+                        </div>
+                        <div class="stat-value blue" id="statTotalFeedback">4</div>
+                        <div class="stat-desc">有效反馈样本</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-label">正向反馈率</span>
+                            <span class="stat-tag success">健康</span>
+                        </div>
+                        <div class="stat-value green" id="statPositiveRate">50%</div>
+                        <div class="stat-desc">满意与较满意反馈占比</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-label">负向反馈率</span>
+                            <span class="stat-tag danger">关注</span>
+                        </div>
+                        <div class="stat-value red" id="statNegativeRate">25%</div>
+                        <div class="stat-desc">不满意反馈占比</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-label">待优化问题数</span>
+                            <span class="stat-tag warning">待处理</span>
+                        </div>
+                        <div class="stat-value orange" id="statPendingIssues">3</div>
+                        <div class="stat-desc">需知识库或话术优化</div>
+                    </div>
+                </div>
+
+                <!-- 评分分布 + 情感分布 -->
+                <div class="card-row">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">评分分布</span>
+                        </div>
+                        <div class="card-body">
+                            <table class="rating-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 8%;">评分</th>
+                                        <th style="width: 12%;">数量</th>
+                                        <th style="width: 12%;">占比</th>
+                                        <th style="width: 35%;">主要问题</th>
+                                        <th style="width: 33%;">处理建议</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span class="rating-badge r5">5</span></td>
+                                        <td>2</td>
+                                        <td>50%</td>
+                                        <td>回答准确、解决及时</td>
+                                        <td>保持当前知识库配置</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="rating-badge r4">4</span></td>
+                                        <td>1</td>
+                                        <td>25%</td>
+                                        <td>回答较完整，细节待优化</td>
+                                        <td>优化表达精简度，突出重点</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="rating-badge r3">3</span></td>
+                                        <td>1</td>
+                                        <td>25%</td>
+                                        <td>回答部分缺失，需转人工</td>
+                                        <td>补充物流信息相关知识条目</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">情感分布</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="sentiment-item">
+                                <span class="sentiment-label">正向</span>
+                                <div class="sentiment-bar-wrap">
+                                    <div class="sentiment-bar-fill positive" id="positiveBar" style="width: 50%;"></div>
+                                </div>
+                                <div class="sentiment-stats">
+                                    <span class="sentiment-count" id="positiveCount">2</span>
+                                    <span class="sentiment-percent positive" id="positivePercent">50%</span>
+                                </div>
+                            </div>
+                            <div class="sentiment-item">
+                                <span class="sentiment-label">中性</span>
+                                <div class="sentiment-bar-wrap">
+                                    <div class="sentiment-bar-fill neutral" id="neutralBar" style="width: 25%;"></div>
+                                </div>
+                                <div class="sentiment-stats">
+                                    <span class="sentiment-count" id="neutralCount">1</span>
+                                    <span class="sentiment-percent neutral" id="neutralPercent">25%</span>
+                                </div>
+                            </div>
+                            <div class="sentiment-item">
+                                <span class="sentiment-label">负向</span>
+                                <div class="sentiment-bar-wrap">
+                                    <div class="sentiment-bar-fill negative" id="negativeBar" style="width: 25%;"></div>
+                                </div>
+                                <div class="sentiment-stats">
+                                    <span class="sentiment-count" id="negativeCount">1</span>
+                                    <span class="sentiment-percent negative" id="negativePercent">25%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 问题归因分布 -->
+                <div class="card-row-full">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">问题归因分布</span>
+                        </div>
+                        <div class="card-body">
+                            <ul class="attribution-list">
+                                <li class="attribution-item">
+                                    <span class="attribution-label">知识库缺失</span>
+                                    <div class="attribution-bar-wrap">
+                                        <div class="attribution-bar-fill" style="width: 40%;"></div>
+                                    </div>
+                                    <span class="attribution-percent">40%</span>
+                                </li>
+                                <li class="attribution-item">
+                                    <span class="attribution-label">意图识别错误</span>
+                                    <div class="attribution-bar-wrap">
+                                        <div class="attribution-bar-fill" style="width: 25%;"></div>
+                                    </div>
+                                    <span class="attribution-percent">25%</span>
+                                </li>
+                                <li class="attribution-item">
+                                    <span class="attribution-label">回答过长</span>
+                                    <div class="attribution-bar-wrap">
+                                        <div class="attribution-bar-fill" style="width: 15%;"></div>
+                                    </div>
+                                    <span class="attribution-percent">15%</span>
+                                </li>
+                                <li class="attribution-item">
+                                    <span class="attribution-label">转人工等待久</span>
+                                    <div class="attribution-bar-wrap">
+                                        <div class="attribution-bar-fill" style="width: 15%;"></div>
+                                    </div>
+                                    <span class="attribution-percent">15%</span>
+                                </li>
+                                <li class="attribution-item">
+                                    <span class="attribution-label">其他</span>
+                                    <div class="attribution-bar-wrap">
+                                        <div class="attribution-bar-fill" style="width: 5%;"></div>
+                                    </div>
+                                    <span class="attribution-percent">5%</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 反馈详情 + 优化建议 -->
+                <div class="card-row-3col">
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">反馈详情</span>
+                        </div>
+                        <div class="card-body" style="padding: 0;">
+                            <table class="feedback-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 10%;">时间</th>
+                                        <th style="width: 12%;">来源</th>
+                                        <th style="width: 22%;">问题摘要</th>
+                                        <th style="width: 12%;">AI表现</th>
+                                        <th style="width: 10%;">反馈类型</th>
+                                        <th style="width: 16%;">问题归因</th>
+                                        <th style="width: 8%;">优先级</th>
+                                        <th style="width: 10%;">状态</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="feedbackTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="card-title">优化建议与迭代优先级</span>
+                        </div>
+                        <div class="card-body">
+                            <ul class="improvement-list">
+                                <li class="improvement-item">
+                                    <div class="improvement-header">
+                                        <span class="improvement-title">知识库覆盖不足</span>
+                                        <div class="improvement-meta">
+                                            <span class="improvement-meta-item">优先级: <span class="priority-tag high">高</span></span>
+                                        </div>
+                                    </div>
+                                    <div class="improvement-section">
+                                        <div class="improvement-section-label">影响范围</div>
+                                        <div class="improvement-section-content">物流异常、售后政策类问题</div>
+                                    </div>
+                                    <div class="improvement-section">
+                                        <div class="improvement-section-label">优化动作</div>
+                                        <div class="improvement-section-content">补充快递异常、签收未收到、退款时效等知识条目</div>
+                                    </div>
+                                    <div class="improvement-section">
+                                        <div class="improvement-section-label">预期收益</div>
+                                        <div class="improvement-section-content">降低转人工率，提高 AI 自动解决率</div>
+                                    </div>
+                                </li>
+                                <li class="improvement-item">
+                                    <div class="improvement-header">
+                                        <span class="improvement-title">转人工链路等待时间长</span>
+                                        <div class="improvement-meta">
+                                            <span class="improvement-meta-item">优先级: <span class="priority-tag medium">中</span></span>
+                                        </div>
+                                    </div>
+                                    <div class="improvement-section">
+                                        <div class="improvement-section-label">影响范围</div>
+                                        <div class="improvement-section-content">宠物健康、退款纠纷类问题</div>
+                                    </div>
+                                    <div class="improvement-section">
+                                        <div class="improvement-section-label">优化动作</div>
+                                        <div class="improvement-section-content">优化高风险问题识别后的一键建单与客服提醒机制</div>
+                                    </div>
+                                    <div class="improvement-section">
+                                        <div class="improvement-section-label">预期收益</div>
+                                        <div class="improvement-section-content">缩短用户等待时间，降低负向反馈</div>
+                                    </div>
+                                </li>
+                                <li class="improvement-item">
+                                    <div class="improvement-header">
+                                        <span class="improvement-title">AI回答表达过长</span>
+                                        <div class="improvement-meta">
+                                            <span class="improvement-meta-item">优先级: <span class="priority-tag low">低</span></span>
+                                        </div>
+                                    </div>
+                                    <div class="improvement-section">
+                                        <div class="improvement-section-label">影响范围</div>
+                                        <div class="improvement-section-content">商品推荐、会员优惠类问题</div>
+                                    </div>
+                                    <div class="improvement-section">
+                                        <div class="improvement-section-label">优化动作</div>
+                                        <div class="improvement-section-content">在 Prompt 中增加"先结论后说明"的回答格式约束</div>
+                                    </div>
+                                    <div class="improvement-section">
+                                        <div class="improvement-section-label">预期收益</div>
+                                        <div class="improvement-section-content">提升用户阅读效率</div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./js/supabaseClient.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/feedback.js"></script>
+    <script>
+        let allFeedbacks = [];
+        let allQARecords = [];
+
+        function formatTime(isoString) {
+            if (!isoString) return '-';
+            const date = new Date(isoString);
+            return date.toLocaleString('zh-CN', {
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function getAttribution(record) {
+            if (record.need_human === true) {
+                return '需要人工处理';
+            }
+            if (record.risk_level === '高') {
+                return '高风险场景';
+            }
+            if (!record.source_doc || record.source_doc.trim() === '') {
+                return '知识库缺失';
+            }
+            if (record.feedback === '没帮助' || record.feedback === '差评') {
+                return '回答不完整';
+            }
+            return '无明显问题';
+        }
+
+        function getFeedbackType(record) {
+            if (record.feedback === '有帮助' || record.feedback === '好评') {
+                return 'positive';
+            }
+            if (record.feedback === '没帮助' || record.feedback === '差评') {
+                return 'negative';
+            }
+            return 'neutral';
+        }
+
+        function renderFeedbackTable() {
+            const tbody = document.getElementById('feedbackTableBody');
+
+            const mergedData = allFeedbacks.map(feedback => {
+                const qaRecord = allQARecords.find(q => q.id === feedback.qa_record_id) || {};
+                return {
+                    ...qaRecord,
+                    ...feedback
+                };
+            });
+
+            const negativeFeedbacks = mergedData.filter(r =>
+                r.feedback === '没帮助' || r.feedback === '差评' || r.need_human === true
+            );
+
+            if (negativeFeedbacks.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">暂无负面反馈数据</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = negativeFeedbacks.map(item => {
+                const type = getFeedbackType(item);
+                const attribution = getAttribution(item);
+                const source = item.need_human ? '转人工中心' : '智能客服';
+
+                return `
+                    <tr>
+                        <td>${formatTime(item.created_at)}</td>
+                        <td>${source}</td>
+                        <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.user_question || '-'}</td>
+                        <td>${item.ai_answer ? item.ai_answer.substring(0, 20) + '...' : '-'}</td>
+                        <td><span class="tag tag-${type}">${type === 'positive' ? '正向' : type === 'neutral' ? '中性' : '负向'}</span></td>
+                        <td style="max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${attribution}</td>
+                        <td><span class="priority-tag ${item.risk_level === '高' ? 'high' : 'low'}">${item.risk_level === '高' ? '高' : '低'}</span></td>
+                        <td><span class="status-tag pending">待处理</span></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateStats() {
+            const mergedData = allFeedbacks.map(feedback => {
+                const qaRecord = allQARecords.find(q => q.id === feedback.qa_record_id) || {};
+                return {
+                    ...qaRecord,
+                    ...feedback
+                };
+            });
+
+            const total = mergedData.length;
+            const positive = mergedData.filter(r => getFeedbackType(r) === 'positive').length;
+            const neutral = mergedData.filter(r => getFeedbackType(r) === 'neutral').length;
+            const negative = mergedData.filter(r => getFeedbackType(r) === 'negative').length;
+
+            document.getElementById('statTotalFeedback').textContent = total;
+            document.getElementById('statPositiveRate').textContent = total > 0 ? `${Math.round((positive / total) * 100)}%` : '0%';
+            document.getElementById('statNegativeRate').textContent = total > 0 ? `${Math.round((negative / total) * 100)}%` : '0%';
+            document.getElementById('statPendingIssues').textContent = negative;
+
+            document.getElementById('positiveCount').textContent = positive;
+            document.getElementById('neutralCount').textContent = neutral;
+            document.getElementById('negativeCount').textContent = negative;
+
+            if (total > 0) {
+                document.getElementById('positiveBar').style.width = `${(positive / total) * 100}%`;
+                document.getElementById('neutralBar').style.width = `${(neutral / total) * 100}%`;
+                document.getElementById('negativeBar').style.width = `${(negative / total) * 100}%`;
+                document.getElementById('positivePercent').textContent = `${Math.round((positive / total) * 100)}%`;
+                document.getElementById('neutralPercent').textContent = `${Math.round((neutral / total) * 100)}%`;
+                document.getElementById('negativePercent').textContent = `${Math.round((negative / total) * 100)}%`;
+            }
+        }
+
+        async function loadData() {
+            console.log("开始从 Supabase 加载反馈数据");
+
+            if (!window.supabaseClient) {
+                console.error("Supabase 未初始化");
+                return;
+            }
+
+            try {
+                const [feedbackResult, qaResult] = await Promise.all([
+                    window.supabaseClient.from('feedback_records').select('*'),
+                    window.supabaseClient.from('qa_records').select('*')
+                ]);
+
+                if (feedbackResult.error) {
+                    console.error("feedback_records 读取失败：", feedbackResult.error);
+                    return;
+                }
+
+                if (qaResult.error) {
+                    console.error("qa_records 读取失败：", qaResult.error);
+                    return;
+                }
+
+                allFeedbacks = feedbackResult.data || [];
+                allQARecords = qaResult.data || [];
+
+                console.log("Supabase feedback_records data:", allFeedbacks);
+                console.log("Supabase qa_records data:", allQARecords);
+
+                renderFeedbackTable();
+                updateStats();
+            } catch (error) {
+                console.error("反馈数据加载异常：", error);
+            }
+        }
+
+        function subscribeFeedbackRealtime() {
+            if (!window.supabaseClient) {
+                console.error("Supabase 未初始化，无法订阅 Realtime");
+                return;
+            }
+
+            window.supabaseClient
+                .channel("feedback-channel")
+                .on("postgres_changes", { event: "*", schema: "public", table: "feedback_records" }, () => loadData())
+                .on("postgres_changes", { event: "*", schema: "public", table: "qa_records" }, () => loadData())
+                .subscribe();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            subscribeFeedbackRealtime();
+        });
+    </script>
+</body>
+</html>
